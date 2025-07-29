@@ -3,14 +3,16 @@ import { adminServices } from "./admin.services";
 import pick from "../../../shared/pickFunction";
 import { filterFieldArray, paginationAndSortingFields } from "./admin.constant";
 import sendResponse from "../../../shared/sendResponse";
+import status from "http-status";
 
+// ! Get All Admin From DB Controller
 const getAllAdmin = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const filter = pick(req?.query, filterFieldArray);
         const options = pick(req?.query, paginationAndSortingFields)
         const result = await adminServices.getAllAdminFromDB(filter, options)
         sendResponse(res, {
-            statusCode: 200,
+            statusCode: status.OK,
             message: "Admin retrieved successfully!",
             meta: result.meta,
             data: result.result
@@ -21,12 +23,13 @@ const getAllAdmin = async (req: Request, res: Response, next: NextFunction) => {
     }
 }
 
+// ! Get Single Admin From DB using id Controller
 const getSingleAdmin = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { id } = req.params;
         const result = await adminServices.getSingleAdminFromDB(id)
         sendResponse(res, {
-            statusCode: 200,
+            statusCode: status.OK,
             message: "Specific admin retrieve successfully!",
             data: result
         })
@@ -36,12 +39,13 @@ const getSingleAdmin = async (req: Request, res: Response, next: NextFunction) =
     }
 }
 
+// ! Update Admin Into DB Controller
 const updateAdminInDB = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { id } = req.params;
         const result = await adminServices.updateAdminInDB(id, req.body)
         sendResponse(res, {
-            statusCode: 200,
+            statusCode: status.OK,
             message: "Admin Updated Successfully",
             data: result
         })

@@ -5,7 +5,7 @@ import { searchFields } from "./admin.constant";
 
 const prisma = new PrismaClient();
 
-
+// ! Get All Admin From DB
 const getAllAdminFromDB = async (params: any, options: any) => {
 
     const { searchTerm, ...filterData } = params;
@@ -61,6 +61,7 @@ const getAllAdminFromDB = async (params: any, options: any) => {
     };
 }
 
+// ! Get Single Admin From DB using id
 const getSingleAdminFromDB = async (id: string): Promise<Admin | null | undefined> => {
     const result = await prisma.admin.findUnique({
         where: {
@@ -70,6 +71,7 @@ const getSingleAdminFromDB = async (id: string): Promise<Admin | null | undefine
     return result
 }
 
+// ! Update Admin Into DB
 const updateAdminInDB = async (id: string, adminInfo: Partial<Admin>) => {
     const result = await prisma.admin.update({
         where: {
