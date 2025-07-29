@@ -54,8 +54,21 @@ const updateAdminInDB = async (req: Request, res: Response, next: NextFunction) 
     }
 }
 
+// ! Hard Delete Admin From DB Controller
+const hardDeleteAdmin = async(req: Request, res: Response, next: NextFunction) => {
+    const {id} = req.params;
+
+    const result = await adminServices.hardDeleteAdminFromDB(id)
+    sendResponse(res, {
+        statusCode: status.OK,
+        message: "Admin deleted successfully!",
+        data: null
+    })
+}
+
 export const adminControllers = {
     getAllAdmin,
     getSingleAdmin,
-    updateAdminInDB
+    updateAdminInDB,
+    hardDeleteAdmin
 }
