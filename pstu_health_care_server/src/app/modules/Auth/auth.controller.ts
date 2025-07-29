@@ -6,7 +6,8 @@ import status from "http-status";
 
 const logIn = catchAsync(async(req: Request, res: Response)=>{
     const result = await authServices.logIn(req.body);
-    console.log(result)
+    const {refreshToken} = result;
+    res.cookie('refreshToken', refreshToken, {secure: false, httpOnly: true})
     sendResponse(res, {
         statusCode: status.OK,
         message: "User logged in successfully!",
