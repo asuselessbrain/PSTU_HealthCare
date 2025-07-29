@@ -25,6 +25,26 @@ const getAllAdmin = async (req: Request, res: Response) => {
     }
 }
 
+const getSingleAdmin = async(req: Request, res: Response) => {
+    try{
+        const {id} = req.params;
+        const result = await adminServices.getSingleAdminFromDB(id)
+        sendResponse(res, {
+            statusCode: 200,
+            message: "Specific admin retrieve successfully!",
+            data: result
+        })
+    }
+    catch (err) {
+        res.status(500).json({
+            success: false,
+            message: (err as Error)?.message || "Something went wrong",
+            error: err
+        })
+    }
+}
+
 export const adminControllers = {
-    getAllAdmin
+    getAllAdmin,
+    getSingleAdmin
 }
