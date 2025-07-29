@@ -21,9 +21,9 @@ const getAllAdmin = async (req: Request, res: Response, next: NextFunction) => {
     }
 }
 
-const getSingleAdmin = async(req: Request, res: Response, next: NextFunction) => {
-    try{
-        const {id} = req.params;
+const getSingleAdmin = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { id } = req.params;
         const result = await adminServices.getSingleAdminFromDB(id)
         sendResponse(res, {
             statusCode: 200,
@@ -36,7 +36,22 @@ const getSingleAdmin = async(req: Request, res: Response, next: NextFunction) =>
     }
 }
 
+const updateAdminInDB = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { id } = req.params;
+        const result = await adminServices.updateAdminInDB(id, req.body)
+        sendResponse(res, {
+            statusCode: 200,
+            message: "Admin Updated Successfully",
+            data: result
+        })
+    } catch (err) {
+        next(err)
+    }
+}
+
 export const adminControllers = {
     getAllAdmin,
-    getSingleAdmin
+    getSingleAdmin,
+    updateAdminInDB
 }

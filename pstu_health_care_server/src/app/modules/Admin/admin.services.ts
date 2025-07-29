@@ -84,5 +84,6 @@ const updateAdminInDB = async (id: string, adminInfo: Partial<Admin>) => {
 
 export const adminServices = {
     getAllAdminFromDB,
-    getSingleAdminFromDB
+    getSingleAdminFromDB,
+    updateAdminInDB
 }
