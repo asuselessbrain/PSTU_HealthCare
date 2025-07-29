@@ -19,11 +19,17 @@ const logIn = catchAsync(async(req: Request, res: Response)=>{
 })
 
 const generateTokenUsingRefreshToken = catchAsync(async(req: Request, res: Response) => {
-    const refreshToken = req.cookies
+    const refreshToken = req.cookies.refreshToken
     console.log(refreshToken)
-    // const result = await authServices.generateTokenUsingRefreshToken()
+    const result = await authServices.generateTokenUsingRefreshToken(refreshToken)
+    sendResponse(res, {
+        statusCode: status.OK,
+        message: "Access token generated successfully!",
+        data: result
+    })
 })
 
 export const authController = {
-    logIn
+    logIn,
+    generateTokenUsingRefreshToken
 }

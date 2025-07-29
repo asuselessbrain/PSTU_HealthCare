@@ -5,5 +5,6 @@ import { loginValidation } from './auth.validation';
 
 const router = express.Router()
 
-router.post('/login', validateRequest(loginValidation), authController.logIn)
+router.post('/login', validateRequest(loginValidation), authController.logIn);
+router.post('/generate-token', authController.generateTokenUsingRefreshToken)
 export const authRoutes = router;
