@@ -16,7 +16,14 @@ const logIn = async(payload: {email: string, password: string}) => {
     }
 
     const accessToken = jwt.sign({email: isUserExist.email, role: isUserExist.role}, "abcdefg", {algorithm: "HS256", expiresIn: "15m"})
-    console.log(accessToken)
+
+    const refreshToken = jwt.sign({email: isUserExist.email, role: isUserExist.role}, "abcdefghij", {algorithm: "HS256", expiresIn: "30d"})
+
+    return {
+        accessToken,
+        refreshToken,
+        needPasswordChanged: isUserExist.needPasswordChange
+    }
 }
 
 export const authServices = {

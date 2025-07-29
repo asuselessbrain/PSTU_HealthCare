@@ -6,10 +6,14 @@ import status from "http-status";
 
 const logIn = catchAsync(async(req: Request, res: Response)=>{
     const result = await authServices.logIn(req.body);
+    console.log(result)
     sendResponse(res, {
         statusCode: status.OK,
         message: "User logged in successfully!",
-        data: result
+        data: {
+            accessToken: result.accessToken,
+            needPasswordChanged: result.needPasswordChanged
+        }
     })
 })
 
