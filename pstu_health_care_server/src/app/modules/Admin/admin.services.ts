@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 const getAllAdminFromDB = async (params: any, options: any) => {
 
     const { searchTerm, ...filterData } = params;
-    const {skip, take} = pagination(options)
+    const {skip, take, sortBy, sortOrder} = pagination(options)
 
     const searchItem = ["name", "email"]
 
@@ -44,7 +44,7 @@ const getAllAdminFromDB = async (params: any, options: any) => {
             skip,
             take,
             orderBy: {
-                [options.sortBy]: options.sortOrder
+                [sortBy]: sortOrder
             }
         }
     )
