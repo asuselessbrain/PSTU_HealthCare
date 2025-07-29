@@ -2,14 +2,15 @@ import { Request, Response } from "express";
 import { adminServices } from "./admin.services";
 import pick from "../../../shared/pickFunction";
 import { filterFieldArray, paginationAndSortingFields } from "./admin.constant";
+import sendResponse from "../../../shared/sendResponse";
 
 const getAllAdmin = async (req: Request, res: Response) => {
     try {
-        const filter = pick(req.query, filterFieldArray);
-        const options = pick(req.query, paginationAndSortingFields)
+        const filter = pick(req?.query, filterFieldArray);
+        const options = pick(req?.query, paginationAndSortingFields)
         const result = await adminServices.getAllAdminFromDB(filter, options)
-        res.status(200).json({
-            success: true,
+        sendResponse(res, {
+            statusCode: 200,
             message: "Admin retrieved successfully!",
             meta: result.meta,
             data: result.result
