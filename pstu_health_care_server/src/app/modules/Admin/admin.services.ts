@@ -66,6 +66,7 @@ const getSingleAdminFromDB = async(id: string) => {
             id
         }
     })
+    return result
 }
 
 export const adminServices = {
