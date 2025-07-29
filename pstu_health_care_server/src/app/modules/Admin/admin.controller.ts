@@ -4,7 +4,9 @@ import pick from "../../../shared/pickFunction";
 
 const getAllAdmin = async (req: Request, res: Response) => {
     try {
-        const result = await adminServices.getAllAdminFromDB(pick(req.query, ["name", "email", "contactNumber", "searchTerm"]))
+        const filter = pick(req.query, ["name", "email", "contactNumber", "searchTerm"]);
+        const options = pick(req.query, ["page", "limit"])
+        const result = await adminServices.getAllAdminFromDB(filter, options)
         res.status(200).json({
             success: true,
             message: "Admin retrieved successfully!",

@@ -2,7 +2,7 @@ import { Prisma, PrismaClient } from "../../../../generated/prisma"
 
 const prisma = new PrismaClient();
 
-const getAllAdminFromDB = async (params: any) => {
+const getAllAdminFromDB = async (params: any, options: any) => {
 
     const { searchTerm, ...filterData } = params;
 
@@ -37,7 +37,9 @@ const getAllAdminFromDB = async (params: any) => {
 
     const result = await prisma.admin.findMany(
         {
-            where: whereIncludeSearch
+            where: whereIncludeSearch,
+            skip: (Number(options.page)-1)*options.limit,
+            take: 1
         }
     )
     return result;
