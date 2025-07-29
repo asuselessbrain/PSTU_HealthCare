@@ -66,6 +66,7 @@ const hardDeleteAdmin = async (req: Request, res: Response, next: NextFunction) 
     })
 }
 
+// ! Soft Delete Admin From DB Controller
 const softDeleteAdmin = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { id } = req.params
@@ -85,5 +86,6 @@ export const adminControllers = {
     getAllAdmin,
     getSingleAdmin,
     updateAdminInDB,
-    hardDeleteAdmin
+    hardDeleteAdmin,
+    softDeleteAdmin
 }

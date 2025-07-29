@@ -10,5 +10,7 @@ router.get('/:id', adminControllers.getSingleAdmin)
 router.patch('/:id', adminControllers.updateAdminInDB)
 // ! Hard Delete Admin From DB route
 router.delete('/:id', adminControllers.hardDeleteAdmin)
+// ! Soft Delete Admin From DB route
+router.patch('/soft/:id', adminControllers.softDeleteAdmin)
 
 export const adminRoutes = router
