@@ -1,3 +1,4 @@
+import { Admin } from './../../../../generated/prisma/index.d';
 import { Prisma, PrismaClient } from "../../../../generated/prisma"
 import pagination from "../../../healper/paginationHealper";
 import { searchFields } from "./admin.constant";
@@ -60,7 +61,7 @@ const getAllAdminFromDB = async (params: any, options: any) => {
     };
 }
 
-const getSingleAdminFromDB = async(id: string) => {
+const getSingleAdminFromDB = async(id: string): Promise<Admin | null | undefined> => {
     const result = await prisma.admin.findUnique({
         where: {
             id

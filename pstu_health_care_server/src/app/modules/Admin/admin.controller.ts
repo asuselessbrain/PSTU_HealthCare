@@ -1,10 +1,10 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { adminServices } from "./admin.services";
 import pick from "../../../shared/pickFunction";
 import { filterFieldArray, paginationAndSortingFields } from "./admin.constant";
 import sendResponse from "../../../shared/sendResponse";
 
-const getAllAdmin = async (req: Request, res: Response) => {
+const getAllAdmin = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const filter = pick(req?.query, filterFieldArray);
         const options = pick(req?.query, paginationAndSortingFields)
@@ -17,15 +17,11 @@ const getAllAdmin = async (req: Request, res: Response) => {
         })
     }
     catch (err) {
-        res.status(500).json({
-            success: false,
-            message: (err as Error)?.message || "Something went wrong",
-            error: err
-        })
+        next(err)
     }
 }
 
-const getSingleAdmin = async(req: Request, res: Response) => {
+const getSingleAdmin = async(req: Request, res: Response, next: NextFunction) => {
     try{
         const {id} = req.params;
         const result = await adminServices.getSingleAdminFromDB(id)
@@ -36,11 +32,7 @@ const getSingleAdmin = async(req: Request, res: Response) => {
         })
     }
     catch (err) {
-        res.status(500).json({
-            success: false,
-            message: (err as Error)?.message || "Something went wrong",
-            error: err
-        })
+        next(err)
     }
 }
 
