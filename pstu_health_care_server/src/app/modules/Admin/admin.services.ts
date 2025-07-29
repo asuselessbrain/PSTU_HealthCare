@@ -8,9 +8,7 @@ const prisma = new PrismaClient();
 const getAllAdminFromDB = async (params: any, options: any) => {
 
     const { searchTerm, ...filterData } = params;
-    const {skip, take, sortBy, sortOrder} = pagination(options)
-
-    
+    const {page, skip, take, sortBy, sortOrder} = pagination(options)
 
     let searchItems: Prisma.AdminWhereInput[] = []
 
@@ -49,7 +47,17 @@ const getAllAdminFromDB = async (params: any, options: any) => {
             }
         }
     )
-    return result;
+    const total = await prisma.admin.count({
+        where: whereIncludeSearch
+    })
+    return {
+        meta: {
+            page,
+            limit: take,
+            total
+        },
+        result
+    };
 }
 
 export const adminServices = {
