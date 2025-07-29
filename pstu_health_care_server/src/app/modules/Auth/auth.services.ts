@@ -1,23 +1,23 @@
 import { prisma } from "../../../shared/prisma";
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 
-const logIn = async(payload: {email: string, password: string}) => {
+const logIn = async (payload: { email: string, password: string }) => {
     const isUserExist = await prisma.user.findUniqueOrThrow({
-        where : {
+        where: {
             email: payload.email
         }
     })
-    
+
     const isPasswordMarched = await bcrypt.compare(payload.password, isUserExist.password)
-    
-    if(!isPasswordMarched){
+
+    if (!isPasswordMarched) {
         throw new Error("Email or password does not matched!")
     }
 
-    const accessToken = jwt.sign({email: isUserExist.email, role: isUserExist.role}, "abcdefg", {algorithm: "HS256", expiresIn: "15m"})
+    const accessToken = jwt.sign({ email: isUserExist.email, role: isUserExist.role }, "abcdefg", { algorithm: "HS256", expiresIn: "15m" })
 
-    const refreshToken = jwt.sign({email: isUserExist.email, role: isUserExist.role}, "abcdefghij", {algorithm: "HS256", expiresIn: "30d"})
+    const refreshToken = jwt.sign({ email: isUserExist.email, role: isUserExist.role }, "abcdefghij", { algorithm: "HS256", expiresIn: "30d" })
 
     return {
         accessToken,
@@ -26,8 +26,16 @@ const logIn = async(payload: {email: string, password: string}) => {
     }
 }
 
-const generateTokenUsingRefreshToken = async(token: string) => {
-    console.log("refresh Token", token)
+const generateTokenUsingRefreshToken = async (token: string) => {
+    let decoded
+    try{
+        decoded = jwt.verify(token, "abcdefghij") as JwtPayload
+    }catch(err){
+        throw new Error("Unauthorized Access!")
+    }
+    
+    const accessToken = jwt.sign({ email: decoded.email, role: decoded.role }, "abcdefg", { algorithm: "HS256", expiresIn: "15m" })
+    return { accessToken }
 }
 
 export const authServices = {
