@@ -1,6 +1,5 @@
 import express, { NextFunction, Request, Response } from 'express';
 import { adminControllers } from './admin.controller';
-import { z } from 'zod';
 import { validateRequest } from '../../middleWares/validateRequest';
 import { validateUpdateAdmin } from './admin.validation';
 const router = express.Router();
