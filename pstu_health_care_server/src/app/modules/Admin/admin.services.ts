@@ -1,10 +1,13 @@
 import { Prisma, PrismaClient } from "../../../../generated/prisma"
+import pagination from "../../../healper/paginationHealper";
 
 const prisma = new PrismaClient();
+
 
 const getAllAdminFromDB = async (params: any, options: any) => {
 
     const { searchTerm, ...filterData } = params;
+    const {skip, take} = pagination(options)
 
     const searchItem = ["name", "email"]
 
@@ -38,8 +41,11 @@ const getAllAdminFromDB = async (params: any, options: any) => {
     const result = await prisma.admin.findMany(
         {
             where: whereIncludeSearch,
-            skip: (Number(options.page)-1)*options.limit,
-            take: 1
+            skip,
+            take,
+            orderBy: {
+                [options.sortBy]: options.sortOrder
+            }
         }
     )
     return result;
