@@ -1,6 +1,7 @@
 import { prisma } from "../../../shared/prisma";
 import bcrypt from 'bcrypt';
 import jwt, { JwtPayload } from 'jsonwebtoken';
+import { createToken } from "../../../healper/jwtHelper";
 
 const logIn = async (payload: { email: string, password: string }) => {
     const isUserExist = await prisma.user.findUniqueOrThrow({
@@ -15,9 +16,9 @@ const logIn = async (payload: { email: string, password: string }) => {
         throw new Error("Email or password does not matched!")
     }
 
-    const accessToken = jwt.sign({ email: isUserExist.email, role: isUserExist.role }, "abcdefg", { algorithm: "HS256", expiresIn: "15m" })
+    const accessToken = createToken({ email: isUserExist.email, role: isUserExist.role }, "abcdefg", "15m")
 
-    const refreshToken = jwt.sign({ email: isUserExist.email, role: isUserExist.role }, "abcdefghij", { algorithm: "HS256", expiresIn: "30d" })
+    const refreshToken = createToken({ email: isUserExist.email, role: isUserExist.role },  "abcdefghij", "30d")
 
     return {
         accessToken,
@@ -34,7 +35,7 @@ const generateTokenUsingRefreshToken = async (token: string) => {
         throw new Error("Unauthorized Access!")
     }
     
-    const accessToken = jwt.sign({ email: decoded.email, role: decoded.role }, "abcdefg", { algorithm: "HS256", expiresIn: "15m" })
+    const accessToken = createToken({ email: decoded.email, role: decoded.role }, "abcdefg", "15m")
     return { accessToken }
 }
 
