@@ -18,6 +18,12 @@ const logIn = catchAsync(async(req: Request, res: Response)=>{
     })
 })
 
+const generateTokenUsingRefreshToken = catchAsync(async(req: Request, res: Response) => {
+    const refreshToken = req.cookies
+    console.log(refreshToken)
+    // const result = await authServices.generateTokenUsingRefreshToken()
+})
+
 export const authController = {
     logIn
 }
