@@ -3,32 +3,41 @@ import { Prisma, PrismaClient } from "../../../../generated/prisma"
 const prisma = new PrismaClient();
 
 const getAllAdminFromDB = async (params: any) => {
-    const {searchTerm, ...filteredData} = params
-    let search: Prisma.AdminWhereInput[] = []
-    const searchFields = ['name', 'email']
+
+    const { searchTerm, ...filterData } = params;
+
+    const searchItem = ["name", "email"]
+
+    let searchItems: Prisma.AdminWhereInput[] = []
 
     if (params.searchTerm) {
+        searchItems.push(
+            {
+                OR: searchItem.map(item => ({
+                    [item]: {
+                        contains: params.searchTerm,
+                        mode: "insensitive"
+                    }
+                }))
+            }
+        )
+    }
 
-        search.push({
-            OR: searchFields.map(field => ({
-                [field]: { contains: params.searchTerm, mode: 'insensitive' }
+    if (Object.keys(filterData).length > 0) {
+        searchItems.push({
+            AND: Object.keys(filterData).map(key => ({
+                [key]: {
+                    equals: filterData[key]
+                }
             }))
         })
     }
 
-    if(Object.keys(filteredData).length>0){
-        search.push({AND: Object.keys(filteredData).map(key=>({
-            [key]: {
-                equals : filteredData[key]
-            }
-        }))})
-    }
-
-    const whereCondition: Prisma.AdminWhereInput = { AND: search }
+    const whereIncludeSearch: Prisma.AdminWhereInput = { AND: searchItems }
 
     const result = await prisma.admin.findMany(
         {
-            where: whereCondition
+            where: whereIncludeSearch
         }
     )
     return result;
