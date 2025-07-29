@@ -55,8 +55,8 @@ const updateAdminInDB = async (req: Request, res: Response, next: NextFunction) 
 }
 
 // ! Hard Delete Admin From DB Controller
-const hardDeleteAdmin = async(req: Request, res: Response, next: NextFunction) => {
-    const {id} = req.params;
+const hardDeleteAdmin = async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
 
     const result = await adminServices.hardDeleteAdminFromDB(id)
     sendResponse(res, {
@@ -64,6 +64,21 @@ const hardDeleteAdmin = async(req: Request, res: Response, next: NextFunction) =
         message: "Admin deleted successfully!",
         data: null
     })
+}
+
+const softDeleteAdmin = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { id } = req.params
+        await adminServices.softDeleteAdminFromDB(id)
+        sendResponse(res, {
+            statusCode: status.OK,
+            message: "Admin deleted Successfully",
+            data: null
+        })
+    }
+    catch (err) {
+        next(err)
+    }
 }
 
 export const adminControllers = {
