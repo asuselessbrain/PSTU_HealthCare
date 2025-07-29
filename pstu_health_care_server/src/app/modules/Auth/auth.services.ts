@@ -8,3 +8,7 @@ const logIn = async(payload: {email: string, password: string}) => {
     })
     console.log(isUserExist)
 }
+
+export const authServices = {
+    logIn
+}
