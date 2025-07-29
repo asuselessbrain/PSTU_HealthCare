@@ -9,7 +9,7 @@ const prisma = new PrismaClient();
 const getAllAdminFromDB = async (params: any, options: any) => {
 
     const { searchTerm, ...filterData } = params;
-    const {page, skip, take, sortBy, sortOrder} = pagination(options)
+    const { page, skip, take, sortBy, sortOrder } = pagination(options)
 
     let searchItems: Prisma.AdminWhereInput[] = []
 
@@ -61,10 +61,22 @@ const getAllAdminFromDB = async (params: any, options: any) => {
     };
 }
 
-const getSingleAdminFromDB = async(id: string): Promise<Admin | null | undefined> => {
+const getSingleAdminFromDB = async (id: string): Promise<Admin | null | undefined> => {
     const result = await prisma.admin.findUnique({
         where: {
             id
+        }
+    })
+    return result
+}
+
+const updateAdminInDB = async (id: string, adminInfo: Partial<Admin>) => {
+    const result = await prisma.admin.update({
+        where: {
+            id
+        },
+        data: {
+            ...adminInfo
         }
     })
     return result
