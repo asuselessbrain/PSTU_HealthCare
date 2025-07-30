@@ -7,7 +7,7 @@ import { prisma } from "../../shared/prisma";
 import { UserStatus } from "../../../generated/prisma";
 
 const auth =(...roles: string[]) => {
-    return async(req: Request, res: Response, next: NextFunction)=>{
+    return async(req: Request & {user?: any}, res: Response, next: NextFunction)=>{
         const token = req.headers.authorization;
 
         if(!token){
