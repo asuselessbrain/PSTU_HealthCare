@@ -1,9 +1,11 @@
+import type { StringValue } from 'ms';
 import { prisma } from "../../../shared/prisma";
 import bcrypt from 'bcrypt';
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import jwt, { JwtPayload, Secret } from 'jsonwebtoken';
 import { createToken } from "../../../healper/jwtHelper";
 import AppError from "../../errors/AppError";
 import status from "http-status";
+import { config } from "../../../config";
 
 const logIn = async (payload: { email: string, password: string }) => {
     const isUserExist = await prisma.user.findUniqueOrThrow({
@@ -18,9 +20,9 @@ const logIn = async (payload: { email: string, password: string }) => {
         throw new Error("Email or password does not matched!")
     }
 
-    const accessToken = await createToken({ email: isUserExist.email, role: isUserExist.role }, "abcdefg", "15m")
+    const accessToken = await createToken({ email: isUserExist.email, role: isUserExist.role }, config.jwt.access_token_secret as Secret, config.jwt.access_token_expire_in as StringValue)
 
-    const refreshToken = await createToken({ email: isUserExist.email, role: isUserExist.role },  "abcdefghij", "30d")
+    const refreshToken = await createToken({ email: isUserExist.email, role: isUserExist.role }, config.jwt.refresh_token_secret as Secret, config.jwt.refresh_token_expire_in as StringValue)
 
     return {
         accessToken,
@@ -31,13 +33,13 @@ const logIn = async (payload: { email: string, password: string }) => {
 
 const generateTokenUsingRefreshToken = async (token: string) => {
     let decoded
-    try{
-        decoded = jwt.verify(token, "abcdefghij") as JwtPayload
-    }catch(err){
-        throw new AppError(status.UNAUTHORIZED,"Unauthorized Access!")
+    try {
+        decoded = jwt.verify(token, config.jwt.refresh_token_secret as Secret) as JwtPayload
+    } catch (err) {
+        throw new AppError(status.UNAUTHORIZED, "Unauthorized Access!")
     }
-    
-    const accessToken = await createToken({ email: decoded.email, role: decoded.role }, "abcdefg", "15m")
+
+    const accessToken = await createToken({ email: decoded.email, role: decoded.role }, config.jwt.access_token_secret as Secret, config.jwt.access_token_expire_in as StringValue)
     return { accessToken }
 }
 
