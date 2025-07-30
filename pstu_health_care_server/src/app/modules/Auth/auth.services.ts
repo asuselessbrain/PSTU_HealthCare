@@ -6,6 +6,7 @@ import { createToken } from "../../../healper/jwtHelper";
 import AppError from "../../errors/AppError";
 import status from "http-status";
 import { config } from "../../../config";
+import { UserStatus } from '../../../../generated/prisma';
 
 const logIn = async (payload: { email: string, password: string }) => {
     const isUserExist = await prisma.user.findUniqueOrThrow({
@@ -43,7 +44,37 @@ const generateTokenUsingRefreshToken = async (token: string) => {
     return { accessToken }
 }
 
+const changePassword = async(email: string, payload: {oldPassword: string, newPassword: string})=>{
+    const userData = await prisma.user.findUniqueOrThrow({
+        where: {
+            email,
+            status: UserStatus.ACTIVE
+        }
+    })
+    
+    const isOldPasswordMatched = await bcrypt.compare(payload.oldPassword, userData.password)
+    
+    if(!isOldPasswordMatched){
+        throw new AppError(status.BAD_REQUEST, "Password does not matched!")
+    }
+
+    const hashedPassword = await bcrypt.hash(payload.newPassword, Number(config.salt_rounds))
+
+    const result = await prisma.user.update({
+        where: {
+            email,
+            status: UserStatus.ACTIVE
+        },
+        data: {
+            password: hashedPassword,
+            needPasswordChange: false
+        }
+    })
+    return result
+}
+
 export const authServices = {
     logIn,
-    generateTokenUsingRefreshToken
+    generateTokenUsingRefreshToken,
+    changePassword
 }

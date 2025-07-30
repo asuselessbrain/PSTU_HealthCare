@@ -33,12 +33,12 @@ const changePassword = catchAsync(async(req :Request&{user?: any}, res: Response
     const result = await authServices.changePassword(email, req?.body)
     sendResponse(res, {
         statusCode: status.OK,
-        message: "PPassword changed successfully!",
+        message: "Password changed successfully!",
         data: result
     })
 })
 
-export const authController = {
+export const authControllers = {
     logIn,
     generateTokenUsingRefreshToken,
     changePassword
