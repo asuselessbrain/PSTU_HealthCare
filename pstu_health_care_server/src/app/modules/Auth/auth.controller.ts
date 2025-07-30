@@ -28,7 +28,18 @@ const generateTokenUsingRefreshToken = catchAsync(async(req: Request, res: Respo
     })
 })
 
+const changePassword = catchAsync(async(req :Request&{user?: any}, res: Response) => {
+    const {email} = req.user;
+    const result = await authServices.changePassword(email, req?.body)
+    sendResponse(res, {
+        statusCode: status.OK,
+        message: "PPassword changed successfully!",
+        data: result
+    })
+})
+
 export const authController = {
     logIn,
-    generateTokenUsingRefreshToken
+    generateTokenUsingRefreshToken,
+    changePassword
 }
