@@ -9,6 +9,10 @@ import { parseJson } from '../../middleWares/parseJson';
 
 const router = express.Router()
 
+router.get("/all-user",
+    auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
+    userControllers.getAllUsers
+)
 
 router.post("/create-admin",
     auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),

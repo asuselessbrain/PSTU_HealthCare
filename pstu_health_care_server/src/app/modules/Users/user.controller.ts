@@ -27,7 +27,7 @@ const createPatient = catchAsync(async(req: Request, res :Response)=>{
     const result = await userServices.createPatientInDB(req.file as IFile, req.body)
     sendResponse(res, {
         statusCode: status.CREATED,
-        message: "Doctor created successfully!",
+        message: "Patient created successfully!",
         data: result
     })
 })
