@@ -35,4 +35,9 @@ router.post("/create-patient",
     userControllers.createPatient
 )
 
+router.patch("/update-status", 
+    auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
+    userControllers.updateStatus
+)
+
 export const userRoutes = router

@@ -81,40 +81,22 @@ const createPatientInDB = async (file: IFile, payload: IPatient) => {
     return result
 }
 
-const search = (searchFields: Prisma.UserWhereInput[], searchTerm: string) => {
-    return searchFields.push(
-        {
-            OR: searchField.map(item => ({
-                [item]: {
-                    contains: searchTerm,
-                    mode: "insensitive"
-                }
-            }))
-        }
-    )
+const search = (payload: any, searchFields: Prisma.UserWhereInput[], searchTerm: string) => {
+    if (payload.searchTerm) {
+        return searchFields.push(
+            {
+                OR: searchField.map(item => ({
+                    [item]: {
+                        contains: searchTerm,
+                        mode: "insensitive"
+                    }
+                }))
+            }
+        )
+    }
 }
 
 const filter = (searchFields: Prisma.UserWhereInput[], filterData: any) => {
-    searchFields.push({
-            AND: Object.keys(filterData).map(item => ({
-                [item]: {
-                    equals: filterData[item]
-                }
-            }))
-        })
-}
-
-const getAllUserFromDB = async (payload: any, options: any) => {
-
-    const { searchTerm, ...filterData } = payload
-    const { page, skip, take, sortBy, sortOrder } = pagination(options)
-
-    let searchFields: Prisma.UserWhereInput[] = [];
-
-    if (payload.searchTerm) {
-        search(searchFields, searchTerm)
-    }
-
     if (Object.keys(filterData).length) {
         searchFields.push({
             AND: Object.keys(filterData).map(item => ({
@@ -124,8 +106,21 @@ const getAllUserFromDB = async (payload: any, options: any) => {
             }))
         })
     }
+}
 
-    const whereCondition : Prisma.UserWhereInput = { AND: searchFields }
+const getAllUserFromDB = async (payload: any, options: any) => {
+
+    const { searchTerm, ...filterData } = payload
+    const { page, skip, take, sortBy, sortOrder } = pagination(options)
+
+    let searchFields: Prisma.UserWhereInput[] = [];
+
+    search(payload, searchFields, searchTerm)
+
+
+    filter(searchFields, filterData)
+    
+    const whereCondition: Prisma.UserWhereInput = { AND: searchFields }
 
     const result = await prisma.user.findMany({
         where: whereCondition,
