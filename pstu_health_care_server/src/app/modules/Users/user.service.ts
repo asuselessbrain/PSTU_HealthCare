@@ -79,14 +79,34 @@ const createPatientInDB = async (file: IFile, payload: IPatient) => {
     return result
 }
 
-const getAllUserFromDB = async () => {
+const getAllUserFromDB = async (filter: any) => {
+
+    let searchFields = [];
+
+    if (filter.searchTerm) {
+        searchFields.push(
+            {
+                OR: [
+                    {
+                        email: {
+                            contains: filter.searchTerm
+                        }
+                    }
+                ]
+            }
+        )
+    }
+
+    const whereCondition = { AND: searchFields }
+
     const result = await prisma.user.findMany({
-        where: { status: UserStatus.ACTIVE }
+        where: whereCondition
     })
     return result
 }
 export const userServices = {
     createAdminInDB,
     createDoctorInDB,
-    createPatientInDB
+    createPatientInDB,
+    getAllUserFromDB
 }

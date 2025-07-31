@@ -33,7 +33,8 @@ const createPatient = catchAsync(async(req: Request, res :Response)=>{
 })
 
 const getAllUser = catchAsync(async(req: Request, res :Response)=>{
-    const result = await userServices.getAllUserFromDB()
+    const filter = req.query
+    const result = await userServices.getAllUserFromDB(filter)
     sendResponse(res, {
         statusCode: status.CREATED,
         message: "User retrieve successfully!",
