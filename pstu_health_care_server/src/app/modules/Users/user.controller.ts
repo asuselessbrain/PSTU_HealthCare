@@ -3,9 +3,10 @@ import { userServices } from "./user.service";
 import sendResponse from "../../../shared/sendResponse";
 import status from "http-status";
 import { catchAsync } from "../../../shared/catchAsync";
+import { IFile } from "../../../interfaces/file";
 
 const createAdmin = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const result = await userServices.createAdminInDB(req.file!, req.body)
+    const result = await userServices.createAdminInDB(req.file as IFile, req.body)
     sendResponse(res, {
         statusCode: status.CREATED,
         message: "Admin created successfully!",
@@ -14,7 +15,7 @@ const createAdmin = catchAsync(async (req: Request, res: Response, next: NextFun
 })
 
 const createDoctor = catchAsync(async(req: Request, res :Response)=>{
-    const result = await userServices.createDoctorInDB(req.file, req.body)
+    const result = await userServices.createDoctorInDB(req.file as IFile, req.body)
     sendResponse(res, {
         statusCode: status.CREATED,
         message: "Doctor created successfully!",

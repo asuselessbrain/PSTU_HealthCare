@@ -31,7 +31,7 @@ const createAdminInDB = async(file: IFile, data: IAdmin) => {
 }
 
 const createDoctorInDB = async(file: IFile, payload: any) => {
-
+    
 }
 
 export const userServices = {
