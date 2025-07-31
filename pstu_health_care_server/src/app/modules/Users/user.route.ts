@@ -1,7 +1,7 @@
 import express, { NextFunction, Request, Response } from 'express';
 import { userControllers } from './user.controller';
 import { validateRequest } from '../../middleWares/validateRequest';
-import { adminValidation } from './user.validation';
+import { adminValidation, doctorValidation } from './user.validation';
 import { UserRole } from '../../../../generated/prisma';
 import auth from '../../middleWares/auth';
 import { upload } from '../../../shared/imageUploader';
@@ -21,6 +21,7 @@ router.post("/create-doctor",
     auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
     upload.single("profileImg"),
     parseJson,
+    validateRequest(doctorValidation),
     userControllers.createDoctor)
 
 export const userRoutes = router

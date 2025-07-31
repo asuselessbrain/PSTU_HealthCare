@@ -1,4 +1,5 @@
 import z from "zod";
+import { Gender } from "../../../../generated/prisma";
 
 export const adminValidation = z.object({
     password: z.string({error: "Password is required!"})
@@ -48,10 +49,12 @@ export const doctorValidation = z.object({
             .string({error: "Email is required!"})
             .regex(/^(\+8801|01)[3-9]\d{8}$/, "Invalid Bangladeshi phone number"),
         address: z.string().optional(),
+        gender: z.enum([Gender.MALE, Gender.FEMALE, Gender.OTHERS]),
         registrationNumber: z.string({error: "Registration Number is required!"}),
         experience: z.int().optional(),
         qualification :z.string({error: "Qualification is required!"}),
         currentWorkingPlace: z.string({error: "CurrentWorkingPlace is required!"}),
         designation: z.string({error: "Designation is required!"}),
+        averageRating: z.float32({error: "Rating is required!"})
     })
 })
