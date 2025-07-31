@@ -3,8 +3,9 @@ import { UserRole } from "../../../../generated/prisma"
 import bcrypt from 'bcrypt';
 import { uploadToCloudinary } from '../../../shared/imageUploader';
 import { prisma } from '../../../shared/prisma';
+import { IAdmin } from './user.interface';
 
-const createAdminInDB = async(file: IFile, data: any) => {
+const createAdminInDB = async(file: IFile, data: IAdmin) => {
 
     const hashedPassword = await bcrypt.hash(data.password, 12)
 
@@ -29,6 +30,11 @@ const createAdminInDB = async(file: IFile, data: any) => {
     return result
 }
 
+const createDoctorInDB = async(file: IFile, payload: any) => {
+
+}
+
 export const userServices = {
-    createAdminInDB
+    createAdminInDB,
+    createDoctorInDB
 }
