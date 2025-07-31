@@ -12,5 +12,5 @@ export interface IDoctor {
 
 export interface IPatient {
     password: string;
-    doctor: Patient
+    patient: Patient
 }

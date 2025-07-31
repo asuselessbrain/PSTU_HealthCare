@@ -3,7 +3,7 @@ import { UserRole } from "../../../../generated/prisma"
 import bcrypt from 'bcrypt';
 import { uploadToCloudinary } from '../../../shared/imageUploader';
 import { prisma } from '../../../shared/prisma';
-import { IAdmin, IDoctor } from './user.interface';
+import { IAdmin, IDoctor, IPatient } from './user.interface';
 import { config } from '../../../config';
 
 const createAdminInDB = async (file: IFile, data: IAdmin) => {
@@ -55,7 +55,31 @@ const createDoctorInDB = async (file: IFile, payload: IDoctor) => {
     return result
 }
 
+const createPatientInDB = async (file: IFile, payload: IPatient) => {
+    const hashedPassword = await bcrypt.hash(payload.password, Number(config.salt_rounds))
+
+    const userData = {
+        email: payload.patient.email,
+        password: hashedPassword,
+        role: UserRole.PATIENT
+    }
+
+    const profileImg = await uploadToCloudinary(file)
+    payload.patient.profilePhoto = profileImg?.secure_url ?? null
+
+    const result = await prisma.$transaction(async (transaction) => {
+        await transaction.user.create({
+            data: userData
+        })
+        const createAdmin = await transaction.patient.create({
+            data: payload.patient
+        })
+        return createAdmin;
+    })
+    return result
+}
 export const userServices = {
     createAdminInDB,
-    createDoctorInDB
+    createDoctorInDB,
+    createPatientInDB
 }
