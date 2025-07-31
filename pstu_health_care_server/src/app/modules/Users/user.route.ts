@@ -11,7 +11,7 @@ const router = express.Router()
 
 router.get("/all-user",
     auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
-    userControllers.getAllUsers
+    userControllers.getAllUser
 )
 
 router.post("/create-admin",

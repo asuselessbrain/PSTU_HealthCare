@@ -32,8 +32,18 @@ const createPatient = catchAsync(async(req: Request, res :Response)=>{
     })
 })
 
+const getAllUser = catchAsync(async(req: Request, res :Response)=>{
+    const result = await userServices.getAllUserFromDB()
+    sendResponse(res, {
+        statusCode: status.CREATED,
+        message: "User retrieve successfully!",
+        data: result
+    })
+})
+
 export const userControllers = {
     createAdmin,
     createDoctor,
-    createPatient
+    createPatient,
+    getAllUser
 }
