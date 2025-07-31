@@ -12,4 +12,5 @@ const router = express.Router()
 router.post('/login', validateRequest(loginValidation), authControllers.logIn);
 router.post('/generate-token', authControllers.generateTokenUsingRefreshToken);
 router.post('/change-password', auth(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.DOCTOR, UserRole.PATIENT), authControllers.changePassword);
+router.post('/forget-password', authControllers.forgetPassword)
 export const authRoutes = router;

@@ -44,17 +44,17 @@ const generateTokenUsingRefreshToken = async (token: string) => {
     return { accessToken }
 }
 
-const changePassword = async(email: string, payload: {oldPassword: string, newPassword: string})=>{
+const changePassword = async (email: string, payload: { oldPassword: string, newPassword: string }) => {
     const userData = await prisma.user.findUniqueOrThrow({
         where: {
             email,
             status: UserStatus.ACTIVE
         }
     })
-    
+
     const isOldPasswordMatched = await bcrypt.compare(payload.oldPassword, userData.password)
-    
-    if(!isOldPasswordMatched){
+
+    if (!isOldPasswordMatched) {
         throw new AppError(status.BAD_REQUEST, "Password does not matched!")
     }
 
@@ -73,8 +73,23 @@ const changePassword = async(email: string, payload: {oldPassword: string, newPa
     return result
 }
 
+const forgetPassword = async (payload: { email: string }) => {
+    const userData = await prisma.user.findUniqueOrThrow({
+        where: {
+            email: payload.email,
+            status: UserStatus.ACTIVE
+        }
+    })
+
+    const resetPasswordToken = await createToken({ email: userData?.email, role: userData?.role }, config.jwt.rest_password_token_secret as Secret, config.jwt.rest_password_token_expire_in as StringValue)
+
+    const resetPasswordLink = config.reset_password_frontend_link + `?id=${userData.id}&token=${resetPasswordToken}`
+    console.log(resetPasswordLink)
+}
+
 export const authServices = {
     logIn,
     generateTokenUsingRefreshToken,
-    changePassword
+    changePassword,
+    forgetPassword
 }
