@@ -48,7 +48,7 @@ const getAllUser = catchAsync(async (req: Request, res: Response) => {
 })
 
 const updateStatus = catchAsync(async (req: Request, res: Response) => {
-    const result = await userServices.updateStatus()
+    const result = await userServices.updateStatus(req.body)
     sendResponse(res, {
         statusCode: status.CREATED,
         message: "User status updated successfully!",

@@ -119,7 +119,7 @@ const getAllUserFromDB = async (payload: any, options: any) => {
 
 
     filter(searchFields, filterData)
-    
+
     const whereCondition: Prisma.UserWhereInput = { AND: searchFields }
 
     const result = await prisma.user.findMany({
@@ -143,9 +143,37 @@ const getAllUserFromDB = async (payload: any, options: any) => {
         result
     };
 }
+
+const updateStatus = async(payload: {id: string, status: UserStatus}) => {
+    
+    const userInfo = await prisma.user.findUniqueOrThrow({
+        where: {
+            id: payload.id
+        }
+    })
+
+    const updatedUser = await prisma.user.update({
+        where: {
+            id: userInfo.id
+        },
+        data: {
+            status: payload.status
+        },
+        select: {
+            id: true,
+            email: true,
+            role: true,
+            needPasswordChange: true,
+            status: true
+        }
+    })
+    return updatedUser;
+}
+
 export const userServices = {
     createAdminInDB,
     createDoctorInDB,
     createPatientInDB,
-    getAllUserFromDB
+    getAllUserFromDB,
+    updateStatus
 }
