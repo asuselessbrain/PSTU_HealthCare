@@ -1,3 +1,4 @@
+import { sortBy } from './../../../../node_modules/effect/src/Array';
 import { IFile } from './../../../interfaces/file';
 import { UserRole, UserStatus } from "../../../../generated/prisma"
 import bcrypt from 'bcrypt';
@@ -5,6 +6,8 @@ import { uploadToCloudinary } from '../../../shared/imageUploader';
 import { prisma } from '../../../shared/prisma';
 import { IAdmin, IDoctor, IPatient } from './user.interface';
 import { config } from '../../../config';
+import { filterFields, searchField } from './user.constrant';
+import pagination from '../../../healper/paginationHealper';
 
 const createAdminInDB = async (file: IFile, data: IAdmin) => {
 
@@ -79,30 +82,61 @@ const createPatientInDB = async (file: IFile, payload: IPatient) => {
     return result
 }
 
-const getAllUserFromDB = async (filter: any) => {
+const getAllUserFromDB = async (filter: any, options: any) => {
+
+    const { searchTerm, ...filterData } = filter
+    const { page, skip, take, sortBy, sortOrder } = pagination(options)
 
     let searchFields = [];
 
     if (filter.searchTerm) {
         searchFields.push(
             {
-                OR: [
-                    {
-                        email: {
-                            contains: filter.searchTerm
-                        }
+                OR: searchField.map(item => ({
+                    [item]: {
+                        contains: searchTerm,
+                        mode: "insensitive"
                     }
-                ]
+                }))
             }
         )
     }
 
+    if (Object.keys(filterData).length) {
+        searchFields.push({
+            AND: Object.keys(filterData).map(item => ({
+                [item]: {
+                    equals: filterData[item]
+                }
+            }))
+        })
+    }
+    searchFields.push({
+        status: UserStatus.ACTIVE
+    })
+
     const whereCondition = { AND: searchFields }
 
     const result = await prisma.user.findMany({
+        where: whereCondition,
+        skip,
+        take,
+        orderBy: {
+            [sortBy]: sortOrder
+        }
+    })
+
+    const total = await prisma.user.count({
         where: whereCondition
     })
-    return result
+    return {
+        meta: {
+            page,
+            limit: take,
+            total
+        },
+        result
+    };
 }
 export const userServices = {
     createAdminInDB,

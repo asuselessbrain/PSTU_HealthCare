@@ -4,6 +4,8 @@ import sendResponse from "../../../shared/sendResponse";
 import status from "http-status";
 import { catchAsync } from "../../../shared/catchAsync";
 import { IFile } from "../../../interfaces/file";
+import pick from "../../../shared/pickFunction";
+import { filterFieldArray, paginationAndSortingFields } from "../Admin/admin.constant";
 
 const createAdmin = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const result = await userServices.createAdminInDB(req.file as IFile, req.body)
@@ -33,12 +35,14 @@ const createPatient = catchAsync(async(req: Request, res :Response)=>{
 })
 
 const getAllUser = catchAsync(async(req: Request, res :Response)=>{
-    const filter = req.query
-    const result = await userServices.getAllUserFromDB(filter)
+    const filter = pick(req?.query, filterFieldArray);
+    const options = pick(req?.query, paginationAndSortingFields)
+    const result = await userServices.getAllUserFromDB(filter, options)
     sendResponse(res, {
         statusCode: status.CREATED,
         message: "User retrieve successfully!",
-        data: result
+        meta: result.meta,
+        data: result.result
     })
 })
 
