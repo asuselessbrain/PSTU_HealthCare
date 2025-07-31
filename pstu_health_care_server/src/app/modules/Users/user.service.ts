@@ -1,5 +1,5 @@
 import { IFile } from './../../../interfaces/file';
-import { UserRole } from "../../../../generated/prisma"
+import { UserRole, UserStatus } from "../../../../generated/prisma"
 import bcrypt from 'bcrypt';
 import { uploadToCloudinary } from '../../../shared/imageUploader';
 import { prisma } from '../../../shared/prisma';
@@ -75,6 +75,13 @@ const createPatientInDB = async (file: IFile, payload: IPatient) => {
             data: payload.patient
         })
         return createAdmin;
+    })
+    return result
+}
+
+const getAllUserFromDB = async () => {
+    const result = await prisma.user.findMany({
+        where: { status: UserStatus.ACTIVE }
     })
     return result
 }
