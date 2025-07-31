@@ -14,7 +14,10 @@ const createUserInDB = async(file: IFile, data: any) => {
     }
 
     const profileImg = await uploadToCloudinary(file)
-    console.log(profileImg?.secure_url)
+    // const profileImg = profileImgUpload?.secure_url
+
+    data.admin.profileImg = profileImg?.secure_url
+    console.log(data)
     // const result = await prisma.$transaction(async(transaction)=> {
     //     await transaction.user.create({
     //         data: userData
