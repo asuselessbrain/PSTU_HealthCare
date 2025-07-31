@@ -2,7 +2,7 @@ import type { StringValue } from 'ms';
 import { prisma } from "../../../shared/prisma";
 import bcrypt from 'bcrypt';
 import jwt, { JwtPayload, Secret } from 'jsonwebtoken';
-import { createToken } from "../../../healper/jwtHelper";
+import { createToken, verify } from "../../../healper/jwtHelper";
 import AppError from "../../errors/AppError";
 import status from "http-status";
 import { config } from "../../../config";
@@ -38,7 +38,7 @@ const logIn = async (payload: { email: string, password: string }) => {
 const generateTokenUsingRefreshToken = async (token: string) => {
     let decoded
     try {
-        decoded = jwt.verify(token, config.jwt.refresh_token_secret as Secret) as JwtPayload
+        decoded = await verify(token, config.jwt.refresh_token_secret as Secret) as JwtPayload
     } catch (err) {
         throw new AppError(status.UNAUTHORIZED, "Unauthorized Access!")
     }
@@ -87,6 +87,7 @@ const forgetPassword = async (payload: { email: string }) => {
     const resetPasswordToken = await createToken({ email: userData?.email, role: userData?.role }, config.jwt.rest_password_token_secret as Secret, config.jwt.rest_password_token_expire_in as StringValue)
 
     const resetPasswordLink = config.reset_password_frontend_link + `?id=${userData.id}&token=${resetPasswordToken}`
+    console.log(resetPasswordLink)
 
     sendEmail(
         userData.email,
@@ -119,9 +120,16 @@ const forgetPassword = async (payload: { email: string }) => {
 
 }
 
+const resetPassword = async(token: string, payload: {password: string})=>{
+    const verifyToken = await verify(token, config.jwt.rest_password_token_secret as Secret) as JwtPayload
+
+    console.log(verifyToken)
+}
+
 export const authServices = {
     logIn,
     generateTokenUsingRefreshToken,
     changePassword,
-    forgetPassword
+    forgetPassword,
+    resetPassword
 }
