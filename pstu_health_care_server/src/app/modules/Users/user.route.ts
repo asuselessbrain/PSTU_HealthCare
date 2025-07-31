@@ -1,7 +1,7 @@
 import express, { NextFunction, Request, Response } from 'express';
 import { userControllers } from './user.controller';
 import { validateRequest } from '../../middleWares/validateRequest';
-import { adminValidation, doctorValidation } from './user.validation';
+import { adminValidation, doctorValidation, patientValidation } from './user.validation';
 import { UserRole } from '../../../../generated/prisma';
 import auth from '../../middleWares/auth';
 import { upload } from '../../../shared/imageUploader';
@@ -22,6 +22,13 @@ router.post("/create-doctor",
     upload.single("profileImg"),
     parseJson,
     validateRequest(doctorValidation),
-    userControllers.createDoctor)
+    userControllers.createDoctor);
+
+router.post("/create-patient", 
+    upload.single("profileImg"),
+    parseJson,
+    validateRequest(patientValidation),
+    userControllers.createPatient
+)
 
 export const userRoutes = router
