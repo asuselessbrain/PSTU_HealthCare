@@ -52,6 +52,6 @@ export const doctorValidation = z.object({
         experience: z.int().optional(),
         qualification :z.string({error: "Qualification is required!"}),
         currentWorkingPlace: z.string({error: "CurrentWorkingPlace is required!"}),
-        designation: z.string({error: "Designation is required!"})
+        designation: z.string({error: "Designation is required!"}),
     })
 })
