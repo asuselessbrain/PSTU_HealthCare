@@ -8,6 +8,8 @@ import status from "http-status";
 import { config } from "../../../config";
 import { UserStatus } from '../../../../generated/prisma';
 
+
+
 const logIn = async (payload: { email: string, password: string }) => {
     const isUserExist = await prisma.user.findUniqueOrThrow({
         where: {
