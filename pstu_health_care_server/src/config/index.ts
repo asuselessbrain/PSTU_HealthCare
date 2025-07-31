@@ -15,5 +15,9 @@ export const config = {
         refresh_token_expire_in: process.env.REFRESH_TOKEN_EXPIRE_IN,
         rest_password_token_secret: process.env.REST_PASSWORD_TOKEN_SECRET,
         rest_password_token_expire_in: process.env.REST_PASSWORD_TOKEN_EXPIRE_IN
+    },
+    nodemailer: {
+        node_mailer_email: process.env.NODE_MAILER_EMAIL,
+        node_mailer_password: process.env.NODE_MAILER_PASSWORD
     }
 }

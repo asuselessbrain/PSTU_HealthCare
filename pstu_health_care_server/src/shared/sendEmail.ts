@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import { config } from "../config";
 
 const sendEmail = async (receiver: string, Subject: string, html: string) => {
     const transporter = nodemailer.createTransport({
@@ -6,14 +7,14 @@ const sendEmail = async (receiver: string, Subject: string, html: string) => {
         port: 587,
         secure: false,
         auth: {
-            user: "ahmedshohagarfan@gmail.com",
-            pass: "asurmrppdwizbhiw",
+            user: config.nodemailer.node_mailer_email,
+            pass: config.nodemailer.node_mailer_password,
         },
     });
 
 
     const info = await transporter.sendMail({
-        from: 'ahmedshohagarfan@gmail.com',
+        from: config.nodemailer.node_mailer_email,
         to: receiver,
         subject: Subject,
         html: html,
