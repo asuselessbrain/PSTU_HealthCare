@@ -8,6 +8,7 @@ import status from "http-status";
 import { config } from "../../../config";
 import { UserStatus } from '../../../../generated/prisma';
 import sendEmail from '../../../shared/sendEmail';
+import path from 'path';
 
 
 
@@ -108,7 +109,7 @@ const forgetPassword = async (payload: { email: string }) => {
     <p>If the button above doesn't work, copy and paste the following URL into your browser:</p>
     <p style="word-break: break-all;">${resetPasswordLink}</p>
 
-    <p><strong>Note:</strong> This link will expire in 10 minutes for security reasons.</p>
+    <p><strong>Note:</strong> This link will expire in 5 minutes for security reasons.</p>
 
     <p>If you did not request a password reset, please ignore this email. Your account is still secure.</p>
 
