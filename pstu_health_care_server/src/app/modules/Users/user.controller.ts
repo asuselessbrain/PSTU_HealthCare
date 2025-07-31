@@ -17,7 +17,7 @@ const createAdmin = catchAsync(async (req: Request, res: Response, next: NextFun
     })
 })
 
-const createDoctor = catchAsync(async(req: Request, res :Response)=>{
+const createDoctor = catchAsync(async (req: Request, res: Response) => {
     const result = await userServices.createDoctorInDB(req.file as IFile, req.body)
     sendResponse(res, {
         statusCode: status.CREATED,
@@ -26,7 +26,7 @@ const createDoctor = catchAsync(async(req: Request, res :Response)=>{
     })
 })
 
-const createPatient = catchAsync(async(req: Request, res :Response)=>{
+const createPatient = catchAsync(async (req: Request, res: Response) => {
     const result = await userServices.createPatientInDB(req.file as IFile, req.body)
     sendResponse(res, {
         statusCode: status.CREATED,
@@ -35,7 +35,7 @@ const createPatient = catchAsync(async(req: Request, res :Response)=>{
     })
 })
 
-const getAllUser = catchAsync(async(req: Request, res :Response)=>{
+const getAllUser = catchAsync(async (req: Request, res: Response) => {
     const filter = pick(req?.query, filterFields);
     const options = pick(req?.query, paginationAndSortingFields)
     const result = await userServices.getAllUserFromDB(filter, options)
@@ -47,9 +47,19 @@ const getAllUser = catchAsync(async(req: Request, res :Response)=>{
     })
 })
 
+const updateStatus = catchAsync(async (req: Request, res: Response) => {
+    const result = await userServices.updateStatus()
+    sendResponse(res, {
+        statusCode: status.CREATED,
+        message: "User status updated successfully!",
+        data: result
+    })
+})
+
 export const userControllers = {
     createAdmin,
     createDoctor,
     createPatient,
-    getAllUser
+    getAllUser,
+    updateStatus
 }
