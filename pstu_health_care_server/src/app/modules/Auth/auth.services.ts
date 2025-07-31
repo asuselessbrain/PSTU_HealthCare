@@ -7,6 +7,7 @@ import AppError from "../../errors/AppError";
 import status from "http-status";
 import { config } from "../../../config";
 import { UserStatus } from '../../../../generated/prisma';
+import sendEmail from '../../../shared/sendEmail';
 
 
 
@@ -86,7 +87,36 @@ const forgetPassword = async (payload: { email: string }) => {
     const resetPasswordToken = await createToken({ email: userData?.email, role: userData?.role }, config.jwt.rest_password_token_secret as Secret, config.jwt.rest_password_token_expire_in as StringValue)
 
     const resetPasswordLink = config.reset_password_frontend_link + `?id=${userData.id}&token=${resetPasswordToken}`
-    console.log(resetPasswordLink)
+
+    sendEmail(
+        userData.email,
+        "Reset Your Password - Action Required",
+        `
+  <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+    <h2>Password Reset Request</h2>
+    <p>Hello User,</p>
+
+    <p>We received a request to reset the password for your account associated with this email address.</p>
+
+    <p>Please click the button below to reset your password:</p>
+
+    <a href="${resetPasswordLink}" 
+       style="display: inline-block; background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
+       Reset Password
+    </a>
+
+    <p>If the button above doesn't work, copy and paste the following URL into your browser:</p>
+    <p style="word-break: break-all;">${resetPasswordLink}</p>
+
+    <p><strong>Note:</strong> This link will expire in 10 minutes for security reasons.</p>
+
+    <p>If you did not request a password reset, please ignore this email. Your account is still secure.</p>
+
+    <p>Best regards,<br>The Support Team</p>
+  </div>
+  `
+    );
+
 }
 
 export const authServices = {

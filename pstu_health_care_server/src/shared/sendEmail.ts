@@ -19,8 +19,6 @@ const sendEmail = async (receiver: string, Subject: string, html: string) => {
         subject: Subject,
         html: html,
     });
-
-    console.log("Message sent:", info.messageId);
 }
 
 export default sendEmail
