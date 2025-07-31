@@ -5,7 +5,7 @@ import { adminValidation } from './user.validation';
 import { UserRole } from '../../../../generated/prisma';
 import auth from '../../middleWares/auth';
 import { upload } from '../../../shared/imageUploader';
-import { parseAsyncMiddleWare } from '../../middleWares/parseAsync';
+import { parseJson } from '../../middleWares/parseJson';
 
 const router = express.Router()
 
@@ -13,8 +13,14 @@ const router = express.Router()
 router.post("/create-admin",
     auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
     upload.single("profileImg"),
-    parseAsyncMiddleWare,
+    parseJson,
     validateRequest(adminValidation),
     userControllers.createAdmin);
+
+router.post("/create-doctor",
+    auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
+    upload.single("profileImg"),
+    parseJson,
+    userControllers.createDoctor)
 
 export const userRoutes = router

@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
-export const parseAsyncMiddleWare = (req: Request, res: Response, next: NextFunction) => {
+export const parseJson = (req: Request, res: Response, next: NextFunction) => {
     try {
         req.body = JSON.parse(req.body.data)
         next()
