@@ -3,6 +3,7 @@ import multer from "multer"
 import path from "path"
 import { v2 as cloudinary } from 'cloudinary';
 import { IFile } from "../interfaces/file";
+import fs from 'fs';
 
 cloudinary.config({
     cloud_name: 'dc4nilvpv',
@@ -12,6 +13,7 @@ cloudinary.config({
 
 
 export const uploadToCloudinary = async (file: IFile) => {
+    fs.unlink(file.path,(error)=>console.log(error))
     try {
         const uploadResult = await cloudinary.uploader
             .upload(
