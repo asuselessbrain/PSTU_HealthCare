@@ -4,16 +4,16 @@ import path from "path"
 import { v2 as cloudinary } from 'cloudinary';
 import { IFile } from "../interfaces/file";
 import fs from 'fs';
+import { config } from "../config";
 
 cloudinary.config({
-    cloud_name: 'dc4nilvpv',
-    api_key: '682899442441513',
-    api_secret: 'xXQ0zS8Hfpiks900tzQpMdgo4c8' // Click 'View API Keys' above to copy your API secret
+    cloud_name: config.cloudinary.cloud_name,
+    api_key: config.cloudinary.cloud_api_key,
+    api_secret: config.cloudinary.cloud_api_secret
 });
 
 
 export const uploadToCloudinary = async (file: IFile) => {
-    fs.unlink(file.path,(error)=>console.log(error))
     try {
         const uploadResult = await cloudinary.uploader
             .upload(
@@ -21,6 +21,9 @@ export const uploadToCloudinary = async (file: IFile) => {
                 public_id: file.filename,
             }
             )
+        fs.unlink(file.path, (error) => {
+            if (error) console.error('Failed to delete local file:', error);
+        });
         return uploadResult;
     }
     catch (error) {
