@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt';
 import { uploadToCloudinary } from '../../../shared/imageUploader';
 import { prisma } from '../../../shared/prisma';
 
-const createUserInDB = async(file: IFile, data: any) => {
+const createAdminInDB = async(file: IFile, data: any) => {
 
     const hashedPassword = await bcrypt.hash(data.password, 12)
 
@@ -30,5 +30,5 @@ const createUserInDB = async(file: IFile, data: any) => {
 }
 
 export const userServices = {
-    createUserInDB
+    createAdminInDB
 }
