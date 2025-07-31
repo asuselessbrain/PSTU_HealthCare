@@ -40,6 +40,9 @@ const createDoctorInDB = async (file: IFile, payload: IDoctor) => {
         role: UserRole.DOCTOR
     }
 
+    const profileImg = await uploadToCloudinary(file)
+    payload.doctor.profilePhoto = profileImg?.secure_url ?? null
+
     const result = await prisma.$transaction(async (transaction) => {
         await transaction.user.create({
             data: userData
