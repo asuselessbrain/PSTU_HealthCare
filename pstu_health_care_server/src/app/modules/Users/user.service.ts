@@ -1,13 +1,12 @@
-import { sortBy } from './../../../../node_modules/effect/src/Array';
 import { IFile } from './../../../interfaces/file';
-import { UserRole, UserStatus } from "../../../../generated/prisma"
+import { Prisma, UserRole, UserStatus } from "../../../../generated/prisma"
 import bcrypt from 'bcrypt';
 import { uploadToCloudinary } from '../../../shared/imageUploader';
 import { prisma } from '../../../shared/prisma';
 import { IAdmin, IDoctor, IPatient } from './user.interface';
 import { config } from '../../../config';
-import { filterFields, searchField } from './user.constrant';
 import pagination from '../../../healper/paginationHealper';
+import { searchField } from './user.constrant';
 
 const createAdminInDB = async (file: IFile, data: IAdmin) => {
 
@@ -82,24 +81,38 @@ const createPatientInDB = async (file: IFile, payload: IPatient) => {
     return result
 }
 
-const getAllUserFromDB = async (filter: any, options: any) => {
+const search = (searchFields: Prisma.UserWhereInput[], searchTerm: string) => {
+    return searchFields.push(
+        {
+            OR: searchField.map(item => ({
+                [item]: {
+                    contains: searchTerm,
+                    mode: "insensitive"
+                }
+            }))
+        }
+    )
+}
 
-    const { searchTerm, ...filterData } = filter
+const filter = (searchFields: Prisma.UserWhereInput[], filterData: any) => {
+    searchFields.push({
+            AND: Object.keys(filterData).map(item => ({
+                [item]: {
+                    equals: filterData[item]
+                }
+            }))
+        })
+}
+
+const getAllUserFromDB = async (payload: any, options: any) => {
+
+    const { searchTerm, ...filterData } = payload
     const { page, skip, take, sortBy, sortOrder } = pagination(options)
 
-    let searchFields = [];
+    let searchFields: Prisma.UserWhereInput[] = [];
 
-    if (filter.searchTerm) {
-        searchFields.push(
-            {
-                OR: searchField.map(item => ({
-                    [item]: {
-                        contains: searchTerm,
-                        mode: "insensitive"
-                    }
-                }))
-            }
-        )
+    if (payload.searchTerm) {
+        search(searchFields, searchTerm)
     }
 
     if (Object.keys(filterData).length) {
@@ -111,11 +124,8 @@ const getAllUserFromDB = async (filter: any, options: any) => {
             }))
         })
     }
-    searchFields.push({
-        status: UserStatus.ACTIVE
-    })
 
-    const whereCondition = { AND: searchFields }
+    const whereCondition : Prisma.UserWhereInput = { AND: searchFields }
 
     const result = await prisma.user.findMany({
         where: whereCondition,

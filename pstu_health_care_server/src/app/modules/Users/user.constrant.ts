@@ -1,2 +1,2 @@
 export const searchField = ["email"]
-export const filterFields = ["status", "role"]
+export const filterFields = ["status", "role", "searchTerm"]
