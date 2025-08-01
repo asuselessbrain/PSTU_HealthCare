@@ -144,8 +144,8 @@ const getAllUserFromDB = async (payload: any, options: any) => {
     };
 }
 
-const updateStatus = async(payload: {id: string, status: UserStatus}) => {
-    
+const updateStatus = async (payload: { id: string, status: UserStatus }) => {
+
     const userInfo = await prisma.user.findUniqueOrThrow({
         where: {
             id: payload.id
@@ -170,10 +170,65 @@ const updateStatus = async(payload: {id: string, status: UserStatus}) => {
     return updatedUser;
 }
 
+const myProfileFromDB = async (user: { email: string, role: string }) => {
+    const userInfo = await prisma.user.findUniqueOrThrow({
+        where: {
+            email: user.email,
+            status: UserStatus.ACTIVE
+        },
+        select: {
+            id: true,
+            email: true,
+            role: true,
+            needPasswordChange: true,
+            status: true
+        }
+    })
+    let profileInfo;
+
+    if (userInfo.role === UserRole.ADMIN) {
+        profileInfo = await prisma.admin.findUniqueOrThrow({
+            where: {
+                email: userInfo.email
+            },
+        })
+    }
+
+    if (userInfo.role === UserRole.SUPER_ADMIN) {
+        profileInfo = await prisma.admin.findUniqueOrThrow({
+            where: {
+                email: userInfo.email
+            }
+        })
+    }
+
+    if (userInfo.role === UserRole.DOCTOR) {
+        profileInfo = await prisma.doctor.findUniqueOrThrow({
+            where: {
+                email: userInfo.email
+            }
+        })
+    }
+
+    if (userInfo.role === UserRole.PATIENT) {
+        profileInfo = await prisma.patient.findUniqueOrThrow({
+            where: {
+                email: userInfo.email
+            }
+        })
+    }
+
+    return {
+        ...userInfo,
+        ...profileInfo
+    }
+}
+
 export const userServices = {
     createAdminInDB,
     createDoctorInDB,
     createPatientInDB,
     getAllUserFromDB,
-    updateStatus
+    updateStatus,
+    myProfileFromDB
 }

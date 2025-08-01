@@ -56,9 +56,9 @@ const updateStatus = catchAsync(async (req: Request, res: Response) => {
     })
 })
 
-const myProfile = catchAsync(async (req: Request & {user?: any}, res: Response) => {
+const myProfile = catchAsync(async (req: Request & {user?: {email: string, role: string}}, res: Response) => {
     const user = req.user;
-    const result = await userServices.myProfileFromDB(user)
+    const result = await userServices.myProfileFromDB(user!)
     sendResponse(res, {
         statusCode: status.CREATED,
         message: "My profile retrieve successfully!",
