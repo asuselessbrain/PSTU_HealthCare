@@ -85,17 +85,21 @@ model Patient {
 
 model DoctorSpecialties {
   specialtiesId String
+  specialties   Specialties @relation(fields: [specialtiesId], references: [id])
   doctorId      String
-  doctor        Doctor @relation(fields: [doctorId], references: [id])
+  doctor        Doctor      @relation(fields: [doctorId], references: [id])
 
   @@id([specialtiesId, doctorId])
   @@map("doctor_specialties")
 }
 
 model Specialties {
-  id    String @id @default(uuid())
-  title String
-  icon  String
+  id                String              @id @default(uuid())
+  title             String @unique
+  icon              String
+  doctorSpecialties DoctorSpecialties[]
+
+  @@map("specialties")
 }
 
 enum UserRole {
