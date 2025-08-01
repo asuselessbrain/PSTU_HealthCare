@@ -13,7 +13,7 @@ router.post("/create-specialties",
     specialtiesControllers.createSpecialties
 )
 
-router.post("/create-specialties",
+router.patch("/update-specialties/:id",
     auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
     upload.single("icon"),
     parseJson,

@@ -45,6 +45,7 @@ const updateSpecialtiesInDB = async (file: IFile, id: string, payload: { title: 
         },
         data: payload
     })
+    return updatedInfo
 }
 
 export const specialtiesServices = {
