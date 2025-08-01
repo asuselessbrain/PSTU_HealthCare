@@ -56,10 +56,21 @@ const updateStatus = catchAsync(async (req: Request, res: Response) => {
     })
 })
 
+const myProfile = catchAsync(async (req: Request & {user?: any}, res: Response) => {
+    const user = req.user;
+    const result = await userServices.myProfileFromDB(user)
+    sendResponse(res, {
+        statusCode: status.CREATED,
+        message: "My profile retrieve successfully!",
+        data: result
+    })
+})
+
 export const userControllers = {
     createAdmin,
     createDoctor,
     createPatient,
     getAllUser,
-    updateStatus
+    updateStatus,
+    myProfile
 }
