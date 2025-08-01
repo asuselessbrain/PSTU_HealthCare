@@ -63,6 +63,7 @@ model Doctor {
   averageRating       Float
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
+  doctorSpecialties DoctorSpecialties[]
 
   @@map("doctors")
 }
@@ -75,11 +76,19 @@ model Patient {
   profilePhoto  String?
   contactNumber String
   address       String
-  isDeleted     Boolean @default(false)
+  isDeleted     Boolean  @default(false)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
   @@map("patients")
+}
+
+model DoctorSpecialties {
+  specialitiesId String
+  doctorId       String
+  doctor Doctor @relation(fields: [doctorId], references: [id])
+
+  @@id([specialitiesId, doctorId])
 }
 
 enum UserRole {

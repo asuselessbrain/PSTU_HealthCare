@@ -8,6 +8,7 @@ import { config } from '../../../config';
 import pagination from '../../../healper/paginationHealper';
 import { searchField } from './user.constrant';
 
+// ! Create Admin
 const createAdminInDB = async (file: IFile, data: IAdmin) => {
 
     const hashedPassword = await bcrypt.hash(data.password, Number(config.salt_rounds))
@@ -33,6 +34,7 @@ const createAdminInDB = async (file: IFile, data: IAdmin) => {
     return result
 }
 
+// ! Create Doctor
 const createDoctorInDB = async (file: IFile, payload: IDoctor) => {
     const hashedPassword = await bcrypt.hash(payload.password, Number(config.salt_rounds))
 
@@ -57,6 +59,7 @@ const createDoctorInDB = async (file: IFile, payload: IDoctor) => {
     return result
 }
 
+// ! Create Patient 
 const createPatientInDB = async (file: IFile, payload: IPatient) => {
     const hashedPassword = await bcrypt.hash(payload.password, Number(config.salt_rounds))
 
@@ -108,6 +111,7 @@ const filter = (searchFields: Prisma.UserWhereInput[], filterData: any) => {
     }
 }
 
+// ! Get all user
 const getAllUserFromDB = async (payload: any, options: any) => {
 
     const { searchTerm, ...filterData } = payload
@@ -144,6 +148,7 @@ const getAllUserFromDB = async (payload: any, options: any) => {
     };
 }
 
+// ! Update user status
 const updateStatus = async (payload: { id: string, status: UserStatus }) => {
 
     const userInfo = await prisma.user.findUniqueOrThrow({
@@ -170,6 +175,7 @@ const updateStatus = async (payload: { id: string, status: UserStatus }) => {
     return updatedUser;
 }
 
+// ! Get my profile
 const myProfileFromDB = async (user: { email: string, role: string }) => {
     const userInfo = await prisma.user.findUniqueOrThrow({
         where: {
@@ -224,6 +230,7 @@ const myProfileFromDB = async (user: { email: string, role: string }) => {
     }
 }
 
+// ! update Profile
 const updateMyProfileInDB = async(user: {email: string, role: string}, payload: any, file: IFile) =>{
 
     if(file){
