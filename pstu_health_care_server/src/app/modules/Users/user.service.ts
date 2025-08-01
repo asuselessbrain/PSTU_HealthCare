@@ -225,6 +225,11 @@ const myProfileFromDB = async (user: { email: string, role: string }) => {
 }
 
 const updateMyProfileInDB = async(user: {email: string, role: string}, payload: any, file: IFile) =>{
+
+    if(file){
+        const profileImg = await uploadToCloudinary(file);
+        payload.profilePhoto = profileImg?.secure_url
+    }
     const userInfo = await prisma.user.findUniqueOrThrow({
         where: {
             email: user.email,
