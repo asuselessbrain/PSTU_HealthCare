@@ -229,9 +229,55 @@ const updateMyProfileInDB = async(user: {email: string, role: string}, payload: 
         where: {
             email: user.email,
             status: UserStatus.ACTIVE
+        },
+        select: {
+            id: true,
+            email: true,
+            role: true,
+            status: true,
+            needPasswordChange: true
         }
     })
-    return userInfo
+
+    let profileInfo;
+
+    if (userInfo.role === UserRole.ADMIN) {
+        profileInfo = await prisma.admin.update({
+            where: {
+                email: userInfo.email
+            },
+            data: payload
+        })
+    }
+
+    if (userInfo.role === UserRole.SUPER_ADMIN) {
+        profileInfo = await prisma.admin.update({
+            where: {
+                email: userInfo.email
+            },
+            data: payload
+        })
+    }
+
+    if (userInfo.role === UserRole.DOCTOR) {
+        profileInfo = await prisma.doctor.update({
+            where: {
+                email: userInfo.email
+            },
+            data: payload
+        })
+    }
+
+    if (userInfo.role === UserRole.PATIENT) {
+        profileInfo = await prisma.patient.update({
+            where: {
+                email: userInfo.email
+            },
+            data: payload
+        })
+    }
+    
+    return {...userInfo, ...profileInfo}
 }
 
 export const userServices = {
