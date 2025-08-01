@@ -15,7 +15,8 @@ import path from 'path';
 const logIn = async (payload: { email: string, password: string }) => {
     const isUserExist = await prisma.user.findUniqueOrThrow({
         where: {
-            email: payload.email
+            email: payload.email,
+            status: UserStatus.ACTIVE
         }
     })
 

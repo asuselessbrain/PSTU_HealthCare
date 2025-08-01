@@ -14,6 +14,11 @@ router.get("/all-user",
     userControllers.getAllUser
 )
 
+router.get("/my-profile", 
+    auth(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.DOCTOR, UserRole.PATIENT),
+    userControllers.myProfile
+)
+
 router.post("/create-admin",
     auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
     upload.single("profileImg"),
