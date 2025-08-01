@@ -67,7 +67,7 @@ const myProfile = catchAsync(async (req: Request & {user?: {email: string, role:
 })
 const updateMyProfile = catchAsync(async (req: Request & {user?: {email: string, role: string}}, res: Response) => {
     const user = req.user;
-    const result = await userServices.updateMyProfileInDB(user!, req.body, req.file)
+    const result = await userServices.updateMyProfileInDB(user!, req.body, req.file as IFile)
     sendResponse(res, {
         statusCode: status.CREATED,
         message: "Profile updated successfully!",

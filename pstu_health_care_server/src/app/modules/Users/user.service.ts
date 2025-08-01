@@ -224,11 +224,22 @@ const myProfileFromDB = async (user: { email: string, role: string }) => {
     }
 }
 
+const updateMyProfileInDB = async(user: {email: string, role: string}, payload: any, file: IFile) =>{
+    const userInfo = await prisma.user.findUniqueOrThrow({
+        where: {
+            email: user.email,
+            status: UserStatus.ACTIVE
+        }
+    })
+    return userInfo
+}
+
 export const userServices = {
     createAdminInDB,
     createDoctorInDB,
     createPatientInDB,
     getAllUserFromDB,
     updateStatus,
-    myProfileFromDB
+    myProfileFromDB,
+    updateMyProfileInDB
 }
