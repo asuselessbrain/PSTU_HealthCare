@@ -26,3 +26,7 @@ const createSpecialtiesInDB = async(file: IFile,payload: {title: string, icon: s
 
     return result
 }
+
+export const specialtiesServices = {
+    createSpecialtiesInDB
+}
