@@ -48,5 +48,6 @@ const updateSpecialtiesInDB = async (file: IFile, id: string, payload: { title: 
 }
 
 export const specialtiesServices = {
-    createSpecialtiesInDB
+    createSpecialtiesInDB,
+    updateSpecialtiesInDB
 }
