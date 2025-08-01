@@ -12,4 +12,11 @@ router.post("/create-specialties",
     parseJson,
     specialtiesControllers.createSpecialties
 )
+
+router.post("/create-specialties",
+    auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
+    upload.single("icon"),
+    parseJson,
+    specialtiesControllers.updateSpecialties
+)
 export const specialtiesRoutes = router
