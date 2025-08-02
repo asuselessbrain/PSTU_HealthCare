@@ -48,8 +48,15 @@ const updateSpecialtiesInDB = async (file: IFile, id: string, payload: { title: 
     return updatedInfo
 }
 
-const getAllSpecialtiesFromDb = async() => {
-    const result = await prisma.specialties.findMany();
+const getAllSpecialtiesFromDb = async (query: any) => {
+    const result = await prisma.specialties.findMany({
+        where: {
+            title: {
+                contains: query,
+                mode: "insensitive"
+            }
+        }
+    });
     return result
 }
 

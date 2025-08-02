@@ -25,7 +25,8 @@ const updateSpecialties = catchAsync(async (req: Request, res: Response) => {
 })
 
 const getSpecialties = catchAsync(async (req: Request, res: Response) => {
-    const result = await specialtiesServices.getAllSpecialtiesFromDb()
+    const query = req.query.searchTerm
+    const result = await specialtiesServices.getAllSpecialtiesFromDb(query)
     sendResponse(res, {
         statusCode: status.OK,
         message: "Specialties retrieve successfully!",
