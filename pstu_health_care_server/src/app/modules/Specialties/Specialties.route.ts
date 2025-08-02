@@ -6,6 +6,10 @@ import { upload } from '../../../shared/imageUploader';
 import { parseJson } from '../../middleWares/parseJson';
 const router = express.Router()
 
+router.get("/",
+    specialtiesControllers.getSpecialties
+)
+
 router.post("/create-specialties",
     auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
     upload.single("icon"),
