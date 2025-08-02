@@ -48,7 +48,13 @@ const updateSpecialtiesInDB = async (file: IFile, id: string, payload: { title: 
     return updatedInfo
 }
 
+const getAllSpecialtiesFromDb = async() => {
+    const result = await prisma.specialties.findMany();
+    return result
+}
+
 export const specialtiesServices = {
     createSpecialtiesInDB,
-    updateSpecialtiesInDB
+    updateSpecialtiesInDB,
+    getAllSpecialtiesFromDb
 }
