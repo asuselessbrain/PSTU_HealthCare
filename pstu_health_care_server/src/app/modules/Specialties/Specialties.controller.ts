@@ -4,6 +4,8 @@ import { specialtiesServices } from "./Specialties.service";
 import { IFile } from "../../../interfaces/file";
 import sendResponse from "../../../shared/sendResponse";
 import status from "http-status";
+import pick from "../../../shared/pickFunction";
+import { paginationAndSortingFields } from "../Admin/admin.constant";
 
 const createSpecialties = catchAsync(async (req: Request, res: Response) => {
     const result = await specialtiesServices.createSpecialtiesInDB(req.file as IFile, req.body)
@@ -25,8 +27,9 @@ const updateSpecialties = catchAsync(async (req: Request, res: Response) => {
 })
 
 const getSpecialties = catchAsync(async (req: Request, res: Response) => {
-    const query = req.query.searchTerm
-    const result = await specialtiesServices.getAllSpecialtiesFromDb(query)
+    const searchTerm = req.query.searchTerm
+    const options = pick(req.query, paginationAndSortingFields)
+    const result = await specialtiesServices.getAllSpecialtiesFromDb(searchTerm, options)
     sendResponse(res, {
         statusCode: status.OK,
         message: "Specialties retrieve successfully!",

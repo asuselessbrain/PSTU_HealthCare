@@ -3,6 +3,7 @@ import { IFile } from "../../../interfaces/file";
 import { prisma } from "../../../shared/prisma";
 import AppError from "../../errors/AppError";
 import { uploadToCloudinary } from "../../../shared/imageUploader";
+import pagination from "../../../healper/paginationHealper";
 
 const createSpecialtiesInDB = async (file: IFile, payload: { title: string, icon: string }) => {
     const isSpecialtiesExist = await prisma.specialties.findUnique({
@@ -48,16 +49,38 @@ const updateSpecialtiesInDB = async (file: IFile, id: string, payload: { title: 
     return updatedInfo
 }
 
-const getAllSpecialtiesFromDb = async (query: any) => {
+const getAllSpecialtiesFromDb = async (query: any, options: any) => {
+    const { page, skip, take, sortBy, sortOrder } = pagination(options)
     const result = await prisma.specialties.findMany({
         where: {
             title: {
                 contains: query,
                 mode: "insensitive"
             }
+        },
+        skip,
+        take,
+        orderBy: {
+            [sortBy]: sortOrder
         }
     });
-    return result
+
+    const total = await prisma.specialties.count({
+        where: {
+            title: {
+                contains: query,
+                mode: "insensitive"
+            }
+        },
+    })
+    return {
+        meta: {
+            page,
+            limit: take,
+            total
+        },
+        result
+    };
 }
 
 export const specialtiesServices = {
