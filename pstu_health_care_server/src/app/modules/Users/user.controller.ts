@@ -40,7 +40,7 @@ const getAllUser = catchAsync(async (req: Request, res: Response) => {
     const options = pick(req?.query, paginationAndSortingFields)
     const result = await userServices.getAllUserFromDB(filter, options)
     sendResponse(res, {
-        statusCode: status.CREATED,
+        statusCode: status.OK,
         message: "User retrieve successfully!",
         meta: result.meta,
         data: result.result
