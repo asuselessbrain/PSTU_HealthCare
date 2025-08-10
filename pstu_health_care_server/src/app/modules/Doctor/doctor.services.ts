@@ -1,5 +1,8 @@
+import { prisma } from "../../../shared/prisma"
+
 const getAllDoctorFromDB = async() => {
-    console.log("Doctor retrived successfully")
+    const result = await prisma.doctor.findMany()
+    return result
 }
 
 export const doctorServices = {
