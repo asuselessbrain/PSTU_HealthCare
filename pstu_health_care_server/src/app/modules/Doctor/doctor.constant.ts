@@ -1,0 +1,1 @@
+export const doctorSearchFields = ["name", "address", "email", "registrationNumber", "qualification", "currentWorkingPlace"]
