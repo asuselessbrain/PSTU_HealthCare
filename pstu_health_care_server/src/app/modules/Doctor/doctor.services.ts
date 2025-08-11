@@ -72,6 +72,31 @@ const getSingleDoctorFromDB = async (id: string) => {
     return result
 }
 
+const hardDeleteDoctorFromDB = async(id: string) => {
+
+    const doctorInfo = await prisma.doctor.findUniqueOrThrow({
+        where: {
+            id
+        }
+    })
+
+    if(!doctorInfo){
+        throw new AppError(status.NOT_FOUND, "Doctor is not found!")
+    }
+
+    if(doctorInfo.isDeleted){
+        throw new AppError(status.UNAUTHORIZED, "Unauthorized access!")
+    }
+
+    const result = await prisma.doctor.delete({
+        where: {
+            id
+        }
+    })
+
+    return result
+}
+
 
 
 export const doctorServices = {
