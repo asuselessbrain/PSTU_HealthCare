@@ -85,21 +85,6 @@ const createPatientInDB = async (file: IFile, payload: IPatient) => {
     return result
 }
 
-const search = (payload: any, searchFields: Prisma.UserWhereInput[], searchTerm: string) => {
-    if (payload.searchTerm) {
-        return searchFields.push(
-            {
-                OR: searchField.map(item => ({
-                    [item]: {
-                        contains: searchTerm,
-                        mode: "insensitive"
-                    }
-                }))
-            }
-        )
-    }
-}
-
 const filter = (searchFields: Prisma.UserWhereInput[], filterData: any) => {
     if (Object.keys(filterData).length) {
         searchFields.push({
