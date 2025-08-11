@@ -1,9 +1,11 @@
 
+import status from "http-status";
 import { Prisma } from "../../../../generated/prisma";
 import pagination from "../../../healper/paginationHealper";
 import { filtering } from "../../../shared/filtering";
 import { prisma } from "../../../shared/prisma"
 import { searching } from "../../../shared/searching";
+import AppError from "../../errors/AppError";
 import { doctorSearchFields } from "./doctor.constant";
 
 const getAllDoctorFromDB = async (query: any) => {
@@ -56,8 +58,23 @@ const getAllDoctorFromDB = async (query: any) => {
     }
 }
 
+const getSingleDoctorFromDB = async (id: string) => {
+    const result = await prisma.doctor.findUniqueOrThrow({
+        where: {
+            id
+        }
+    })
+
+    if(result.isDeleted){
+        throw new AppError(status.UNAUTHORIZED, "You are not authorized!")
+    }
+
+    return result
+}
+
 
 
 export const doctorServices = {
-    getAllDoctorFromDB
+    getAllDoctorFromDB,
+    getSingleDoctorFromDB
 }
