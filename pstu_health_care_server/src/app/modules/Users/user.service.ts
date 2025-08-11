@@ -7,6 +7,7 @@ import { IAdmin, IDoctor, IPatient } from './user.interface';
 import { config } from '../../../config';
 import pagination from '../../../healper/paginationHealper';
 import { searchField } from './user.constrant';
+import { searching } from '../../../shared/searching';
 
 // ! Create Admin
 const createAdminInDB = async (file: IFile, data: IAdmin) => {
@@ -119,7 +120,7 @@ const getAllUserFromDB = async (payload: any, options: any) => {
 
     let searchFields: Prisma.UserWhereInput[] = [];
 
-    search(payload, searchFields, searchTerm)
+    searching(searchTerm, searchFields, searchField )
 
 
     filter(searchFields, filterData)
