@@ -101,5 +101,6 @@ const hardDeleteDoctorFromDB = async(id: string) => {
 
 export const doctorServices = {
     getAllDoctorFromDB,
-    getSingleDoctorFromDB
+    getSingleDoctorFromDB,
+    hardDeleteDoctorFromDB
 }
