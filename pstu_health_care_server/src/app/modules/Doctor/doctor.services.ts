@@ -11,7 +11,7 @@ import { IFile } from "../../../interfaces/file";
 import { uploadToCloudinary } from "../../../shared/imageUploader";
 
 const getAllDoctorFromDB = async (query: any) => {
-    const { searchTerm, page, limit, sortBy, sortOrder, ...filterData } = query;
+    const { searchTerm, page, limit, sortBy, sortOrder, specialties, ...filterData } = query;
 
     const options = {
         page: Number(page) || 1,
@@ -30,6 +30,21 @@ const getAllDoctorFromDB = async (query: any) => {
     if (Object.keys(filterData).length > 0) {
         filtering(searchItems, filterData)
 
+    }
+
+    if(specialties && specialties.length > 0){
+        searchItems.push({
+            doctorSpecialties: {
+                some: {
+                    specialties: {
+                        title: {
+                            contains: specialties,
+                            mode: "insensitive"
+                        }
+                    }
+                }
+            }
+        })
     }
 
     const orCondition: Prisma.DoctorWhereInput = { AND: searchItems }

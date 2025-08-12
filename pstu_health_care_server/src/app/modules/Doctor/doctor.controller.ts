@@ -53,7 +53,7 @@ const softDeleteDoctor = catchAsync(async (req: Request, res: Response) => {
 })
 
 const updateDoctor = catchAsync(async (req: Request, res: Response) => {
-    const { id } = req.params
+    const { id } = req.params;
     const payload = req.body;
     const file = req.file;
 
