@@ -6,6 +6,6 @@ const router = express.Router();
 router.get('/', doctorControllers.getAllDoctor)
 router.get('/:id', doctorControllers.getSingleDoctor)
 router.delete('/:id', doctorControllers.hardDeleteDoctor)
-router.patch('/:id', doctorControllers.softDeleteDoctor)
+router.patch('/soft/:id', doctorControllers.softDeleteDoctor)
 
 export const doctorRoutes = router

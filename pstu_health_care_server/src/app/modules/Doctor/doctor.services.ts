@@ -139,7 +139,9 @@ const softDeleteDoctorFromDB = async(id: string) => {
                 status: UserStatus.DELETED
             }
         })
+        return deleteDoctor
     })
+    return result
 }
 
 export const doctorServices = {
