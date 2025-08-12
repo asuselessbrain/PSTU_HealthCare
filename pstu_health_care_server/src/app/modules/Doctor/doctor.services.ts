@@ -164,9 +164,31 @@ const softDeleteDoctorFromDB = async (id: string) => {
     return result
 }
 
+const updateDoctorInDB = async(payload: any, id: string) => {
+    const doctorInfo = await prisma.doctor.findUniqueOrThrow({
+        where: {
+            id
+        }
+    })
+
+    if(doctorInfo.isDeleted){
+        throw new AppError(status.NOT_FOUND, "Doctor not found!")
+    }
+
+    const updatedDoctor = await prisma.doctor.update({
+        where: {
+            id: doctorInfo.id
+        },
+        data: payload
+    })
+
+    return updatedDoctor
+}
+
 export const doctorServices = {
     getAllDoctorFromDB,
     getSingleDoctorFromDB,
     hardDeleteDoctorFromDB,
-    softDeleteDoctorFromDB
+    softDeleteDoctorFromDB,
+    updateDoctorInDB
 }
