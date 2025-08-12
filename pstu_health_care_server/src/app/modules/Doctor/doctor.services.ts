@@ -1,6 +1,6 @@
 
 import status from "http-status";
-import { Prisma } from "../../../../generated/prisma";
+import { Prisma, UserStatus } from "../../../../generated/prisma";
 import pagination from "../../../healper/paginationHealper";
 import { filtering } from "../../../shared/filtering";
 import { prisma } from "../../../shared/prisma"
@@ -97,10 +97,54 @@ const hardDeleteDoctorFromDB = async(id: string) => {
     return result
 }
 
+const softDeleteDoctorFromDB = async(id: string) => {
 
+    const isDoctorExist = await prisma.doctor.findUniqueOrThrow({
+        where: {
+            id
+        }
+    })
+
+    if(isDoctorExist.isDeleted){
+        throw new AppError(status.NOT_FOUND, "Doctor is not found!")
+    }
+
+    const isUserExist = await prisma.user.findUniqueOrThrow({
+        where: {
+            email: isDoctorExist.email
+        }
+    })
+
+    if(isUserExist.status === UserStatus.DELETED){
+        throw new AppError(status.NOT_FOUND, "User is not found!")
+    }
+
+    const result = await prisma.$transaction(async(transactionClient)=>{
+        
+
+        const deleteDoctor = await transactionClient.doctor.update({
+            where: {
+                id
+            },
+            data: {
+                isDeleted: true
+            }
+        })
+
+        await transactionClient.user.update({
+            where: {
+                email: deleteDoctor.email
+            },
+            data: {
+                status: UserStatus.DELETED
+            }
+        })
+    })
+}
 
 export const doctorServices = {
     getAllDoctorFromDB,
     getSingleDoctorFromDB,
-    hardDeleteDoctorFromDB
+    hardDeleteDoctorFromDB,
+    softDeleteDoctorFromDB
 }
