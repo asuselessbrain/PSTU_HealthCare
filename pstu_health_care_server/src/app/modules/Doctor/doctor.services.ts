@@ -7,6 +7,8 @@ import { prisma } from "../../../shared/prisma"
 import { searching } from "../../../shared/searching";
 import AppError from "../../errors/AppError";
 import { doctorSearchFields } from "./doctor.constant";
+import { IFile } from "../../../interfaces/file";
+import { uploadToCloudinary } from "../../../shared/imageUploader";
 
 const getAllDoctorFromDB = async (query: any) => {
     const { searchTerm, page, limit, sortBy, sortOrder, ...filterData } = query;
@@ -164,7 +166,12 @@ const softDeleteDoctorFromDB = async (id: string) => {
     return result
 }
 
-const updateDoctorInDB = async(payload: any, id: string) => {
+const updateDoctorInDB = async(file: IFile | undefined,payload: any, id: string) => {
+
+    if(file){
+        const imageUrl = await uploadToCloudinary(file);
+        payload.profilePhoto = imageUrl?.secure_url
+    }
     const doctorInfo = await prisma.doctor.findUniqueOrThrow({
         where: {
             id

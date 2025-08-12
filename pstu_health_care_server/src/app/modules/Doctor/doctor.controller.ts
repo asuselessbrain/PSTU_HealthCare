@@ -55,8 +55,9 @@ const softDeleteDoctor = catchAsync(async (req: Request, res: Response) => {
 const updateDoctor = catchAsync(async (req: Request, res: Response) => {
     const { id } = req.params
     const payload = req.body;
+    const file = req.file
 
-    const result = await doctorServices.updateDoctorInDB(payload,id)
+    const result = await doctorServices.updateDoctorInDB(file, payload,id)
 
     sendResponse(res, {
         statusCode: status.OK,
