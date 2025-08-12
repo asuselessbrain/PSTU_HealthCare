@@ -44,7 +44,14 @@ const getAllDoctorFromDB = async (query: any) => {
         },
         include: {
             doctorSpecialties: {
-                include: { specialties: true }
+                select: {
+                    specialties: {
+                        select: {
+                            title: true,
+                            icon: true
+                        }
+                    }
+                }
             }
         }
     })
@@ -225,7 +232,16 @@ const updateDoctorInDB = async (file: IFile | undefined, payload: any, id: strin
             id
         },
         include: {
-            doctorSpecialties: true
+            doctorSpecialties: {
+                select: {
+                    specialties: {
+                        select: {
+                            title: true,
+                            icon: true
+                        }
+                    }
+                }
+            }
         }
     })
     return updatedDoctor
