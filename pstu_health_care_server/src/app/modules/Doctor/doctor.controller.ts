@@ -69,5 +69,6 @@ export const doctorControllers = {
     getAllDoctor,
     getSingleDoctor,
     hardDeleteDoctor,
-    softDeleteDoctor
+    softDeleteDoctor,
+    updateDoctor
 }
