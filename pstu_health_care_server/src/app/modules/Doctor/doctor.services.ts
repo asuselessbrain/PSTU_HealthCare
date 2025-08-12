@@ -43,7 +43,9 @@ const getAllDoctorFromDB = async (query: any) => {
             [sortBy]: sortOrder
         },
         include: {
-            doctorSpecialties: true
+            doctorSpecialties: {
+                include: { specialties: true }
+            }
         }
     })
     const total = await prisma.doctor.count({
@@ -166,9 +168,11 @@ const softDeleteDoctorFromDB = async (id: string) => {
     return result
 }
 
-const updateDoctorInDB = async(file: IFile | undefined,payload: any, id: string) => {
+const updateDoctorInDB = async (file: IFile | undefined, payload: any, id: string) => {
 
-    if(file){
+    const { specialties, ...doctorData } = payload
+
+    if (file) {
         const imageUrl = await uploadToCloudinary(file);
         payload.profilePhoto = imageUrl?.secure_url
     }
@@ -178,17 +182,52 @@ const updateDoctorInDB = async(file: IFile | undefined,payload: any, id: string)
         }
     })
 
-    if(doctorInfo.isDeleted){
+    if (doctorInfo.isDeleted) {
         throw new AppError(status.NOT_FOUND, "Doctor not found!")
     }
 
-    const updatedDoctor = await prisma.doctor.update({
-        where: {
-            id: doctorInfo.id
-        },
-        data: payload
-    })
+    await prisma.$transaction(async (transactionClient) => {
+        await prisma.doctor.update({
+            where: {
+                id: doctorInfo.id
+            },
+            data: doctorData,
+            include: {
+                doctorSpecialties: true
+            }
+        })
 
+
+        const createSpecialtyData = specialties.filter((specialty: { id: string, delete: boolean }) => !specialty.delete)
+
+        for (const specialty of createSpecialtyData) {
+            await prisma.doctorSpecialties.create({
+                data: {
+                    specialtiesId: specialty.id,
+                    doctorId: id
+                }
+            })
+        }
+
+        const deleteSpecialtyData = specialties.filter((specialty: { id: string, delete: boolean }) => specialty.delete)
+
+        for (const specialty of deleteSpecialtyData) {
+            await transactionClient.doctorSpecialties.deleteMany({
+                where: {
+                    specialtiesId: specialty.id,
+                    doctorId: id
+                }
+            })
+        }
+    })
+    const updatedDoctor = await prisma.doctor.findUniqueOrThrow({
+        where: {
+            id
+        },
+        include: {
+            doctorSpecialties: true
+        }
+    })
     return updatedDoctor
 }
 
