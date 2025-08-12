@@ -52,6 +52,19 @@ const softDeleteDoctor = catchAsync(async (req: Request, res: Response) => {
     })
 })
 
+const updateDoctor = catchAsync(async (req: Request, res: Response) => {
+    const { id } = req.params
+    const payload = req.body;
+
+    const result = await doctorServices.updateDoctorInDB(payload,id)
+
+    sendResponse(res, {
+        statusCode: status.OK,
+        message: "Doctor updated successfully!",
+        data: result
+    })
+})
+
 export const doctorControllers = {
     getAllDoctor,
     getSingleDoctor,
