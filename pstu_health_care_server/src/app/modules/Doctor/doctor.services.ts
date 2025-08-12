@@ -65,14 +65,14 @@ const getSingleDoctorFromDB = async (id: string) => {
         }
     })
 
-    if(result.isDeleted){
+    if (result.isDeleted) {
         throw new AppError(status.UNAUTHORIZED, "You are not authorized!")
     }
 
     return result
 }
 
-const hardDeleteDoctorFromDB = async(id: string) => {
+const hardDeleteDoctorFromDB = async (id: string) => {
 
     const doctorInfo = await prisma.doctor.findUniqueOrThrow({
         where: {
@@ -80,24 +80,44 @@ const hardDeleteDoctorFromDB = async(id: string) => {
         }
     })
 
-    if(!doctorInfo){
+    if (!doctorInfo) {
         throw new AppError(status.NOT_FOUND, "Doctor is not found!")
     }
 
-    if(doctorInfo.isDeleted){
-        throw new AppError(status.UNAUTHORIZED, "Unauthorized access!")
+    if (doctorInfo.isDeleted) {
+        throw new AppError(status.NOT_FOUND, "Doctor is not found!")
     }
 
-    const result = await prisma.doctor.delete({
+    const isUserExist = await prisma.user.findUniqueOrThrow({
         where: {
-            id
+            email: doctorInfo.email
         }
+    })
+
+    if (isUserExist.status === UserStatus.DELETED) {
+        throw new AppError(status.NOT_FOUND, "User is not found!")
+    }
+
+    const result = await prisma.$transaction(async (transactionClient) => {
+        const deleteDoctor = await transactionClient.doctor.delete({
+            where: {
+                id
+            }
+        })
+
+        const deleteUser = await transactionClient.user.delete({
+            where: {
+                email: deleteDoctor.email
+            }
+        })
+
+        return deleteDoctor
     })
 
     return result
 }
 
-const softDeleteDoctorFromDB = async(id: string) => {
+const softDeleteDoctorFromDB = async (id: string) => {
 
     const isDoctorExist = await prisma.doctor.findUniqueOrThrow({
         where: {
@@ -105,7 +125,7 @@ const softDeleteDoctorFromDB = async(id: string) => {
         }
     })
 
-    if(isDoctorExist.isDeleted){
+    if (isDoctorExist.isDeleted) {
         throw new AppError(status.NOT_FOUND, "Doctor is not found!")
     }
 
@@ -115,12 +135,12 @@ const softDeleteDoctorFromDB = async(id: string) => {
         }
     })
 
-    if(isUserExist.status === UserStatus.DELETED){
+    if (isUserExist.status === UserStatus.DELETED) {
         throw new AppError(status.NOT_FOUND, "User is not found!")
     }
 
-    const result = await prisma.$transaction(async(transactionClient)=>{
-        
+    const result = await prisma.$transaction(async (transactionClient) => {
+
 
         const deleteDoctor = await transactionClient.doctor.update({
             where: {
