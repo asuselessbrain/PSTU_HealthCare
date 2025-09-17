@@ -69,16 +69,18 @@ model Doctor {
 }
 
 model Patient {
-  id            String   @id @default(uuid())
-  name          String
-  email         String   @unique
-  user          User     @relation(fields: [email], references: [email])
-  profilePhoto  String?
-  contactNumber String
-  address       String
-  isDeleted     Boolean  @default(false)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id                String             @id @default(uuid())
+  name              String
+  email             String             @unique
+  user              User               @relation(fields: [email], references: [email])
+  profilePhoto      String?
+  contactNumber     String
+  address           String
+  isDeleted         Boolean            @default(false)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  patientHealthData PatientHealthData?
+  medicalReport     MedicalReport[]
 
   @@map("patients")
 }
@@ -88,8 +90,8 @@ model DoctorSpecialties {
   specialties   Specialties @relation(fields: [specialtiesId], references: [id])
   doctorId      String
   doctor        Doctor      @relation(fields: [doctorId], references: [id])
-  createdAt         DateTime            @default(now())
-  updatedAt         DateTime            @updatedAt
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
 
   @@id([specialtiesId, doctorId])
   @@map("doctor_specialties")
@@ -104,6 +106,44 @@ model Specialties {
   doctorSpecialties DoctorSpecialties[]
 
   @@map("specialties")
+}
+
+model PatientHealthData {
+  id                  String        @id @default(uuid())
+  patientId           String        @unique
+  patient             Patient       @relation(fields: [patientId], references: [id])
+  dateOfBirth         DateTime
+  gender              Gender
+  bloodGroup          BloodGroup
+  hasAllergies        Boolean       @default(false)
+  hasDiabetes         Boolean       @default(false)
+  height              String
+  weight              String
+  smokingStatus       Boolean       @default(false)
+  dietaryPreferences  String
+  pregnancyStatus     Boolean       @default(false)
+  mentalHealthHistory String
+  immunizationStatus  String
+  hasPastSurgeries    Boolean       @default(false)
+  recentAnxiety       Boolean       @default(false)
+  recentDepression    Boolean       @default(false)
+  maritalStatus       MaritalStatus
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+
+  @@map("patient_health_data")
+}
+
+model MedicalReport {
+  id         String @id   @default(uuid())
+  patientId  String
+  patient    Patient  @relation(fields: [patientId], references: [id])
+  reportName String
+  reportLink String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("medical_report")
 }
 
 enum UserRole {
@@ -123,4 +163,20 @@ enum Gender {
   MALE
   FEMALE
   OTHERS
+}
+
+enum BloodGroup {
+  A_POSITIVE
+  B_POSITIVE
+  O_POSITIVE
+  AB_POSITIVE
+  A_NEGATIVE
+  B_NEGATIVE
+  O_NEGATIVE
+  AB_NEGATIVE
+}
+
+enum MaritalStatus {
+  MARRIED
+  UNMARRIED
 }

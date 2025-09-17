@@ -8,7 +8,6 @@ import status from "http-status";
 import { config } from "../../../config";
 import { UserStatus } from '../../../../generated/prisma';
 import sendEmail from '../../../shared/sendEmail';
-import path from 'path';
 
 
 
