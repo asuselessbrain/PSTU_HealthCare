@@ -1,5 +1,7 @@
 import { Prisma, PrismaClient, UserStatus, Admin } from "../../../../generated/prisma"
 import pagination from "../../../healper/paginationHealper";
+import { filtering } from "../../../shared/filtering";
+import { searching } from "../../../shared/searching";
 import { searchFields } from "./admin.constant";
 
 const prisma = new PrismaClient();
@@ -13,26 +15,11 @@ const getAllAdminFromDB = async (params: any, options: any) => {
     let searchItems: Prisma.AdminWhereInput[] = []
 
     if (params.searchTerm) {
-        searchItems.push(
-            {
-                OR: searchFields.map(item => ({
-                    [item]: {
-                        contains: params.searchTerm,
-                        mode: "insensitive"
-                    }
-                }))
-            }
-        )
+        searching(searchTerm, searchItems, searchFields)
     }
 
     if (Object.keys(filterData).length > 0) {
-        searchItems.push({
-            AND: Object.keys(filterData).map(key => ({
-                [key]: {
-                    equals: filterData[key]
-                }
-            }))
-        })
+        filtering(searchItems, filterData)
     }
 
     searchItems.push({
@@ -49,7 +36,7 @@ const getAllAdminFromDB = async (params: any, options: any) => {
             orderBy: {
                 [sortBy]: sortOrder
             },
-            
+
         }
     )
     const total = await prisma.admin.count({
@@ -101,13 +88,13 @@ const updateAdminInDB = async (id: string, adminInfo: Partial<Admin>) => {
 }
 
 // ! Hard Delete Admin From DB
-const hardDeleteAdminFromDB = async(id: string) => {
+const hardDeleteAdminFromDB = async (id: string) => {
     await prisma.admin.findUniqueOrThrow({
         where: {
             id
         }
     })
-    const result = await prisma.$transaction(async(transactionClient) => {
+    const result = await prisma.$transaction(async (transactionClient) => {
         const deleteAdmin = await transactionClient.admin.delete({
             where: {
                 id,
@@ -125,13 +112,13 @@ const hardDeleteAdminFromDB = async(id: string) => {
 }
 
 // ! Soft Delete Admin From DB
-const softDeleteAdminFromDB = async(id: string) => {
+const softDeleteAdminFromDB = async (id: string) => {
     await prisma.admin.findUniqueOrThrow({
         where: {
             id
         }
     })
-    const result = await prisma.$transaction(async(transactionClient)=>{
+    const result = await prisma.$transaction(async (transactionClient) => {
         const deleteAdmin = await transactionClient.admin.update({
             where: {
                 id,

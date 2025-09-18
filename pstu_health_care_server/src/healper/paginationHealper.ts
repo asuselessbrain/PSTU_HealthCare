@@ -1,4 +1,4 @@
-const pagination = (options: {page?: number, limit?: number, sortBy: string, sortOrder: string}) => {
+const pagination = (options: {page?: number, limit?: number, sortBy?: string, sortOrder?: string}) => {
     const limit = Number(options.limit) || 10
     const page = Number(options.page) || 1
     const skip = (Number(page) - 1) * limit;

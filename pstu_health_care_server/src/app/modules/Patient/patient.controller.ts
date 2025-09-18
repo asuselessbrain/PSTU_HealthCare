@@ -5,7 +5,8 @@ import { patientServices } from "./patient.services";
 import { Request, Response } from "express";
 
 const getAllPatientFromDB = catchAsync(async (req: Request, res: Response) => {
-    const result = await patientServices.getAllPatientFromDB()
+    const query = req.query
+    const result = await patientServices.getAllPatientFromDB(query)
     sendResponse(res, {
         statusCode: status.OK,
         message: "Doctor retrieve successfully!",
