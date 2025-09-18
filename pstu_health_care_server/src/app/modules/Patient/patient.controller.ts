@@ -9,11 +9,24 @@ const getAllPatientFromDB = catchAsync(async (req: Request, res: Response) => {
     const result = await patientServices.getAllPatientFromDB(query)
     sendResponse(res, {
         statusCode: status.OK,
-        message: "Doctor retrieve successfully!",
+        message: "Patient retrieve successfully!",
+        data: result
+    })
+})
+
+const softDeletePatient = catchAsync(async(req: Request, res: Response)=>{
+    const {id} = req.params
+
+    const result = await patientServices.softDeletePatientFromDB(id)
+
+    sendResponse(res, {
+        statusCode: status.OK,
+        message: "Patient deleted successfully!",
         data: result
     })
 })
 
 export const patientController = {
-    getAllPatientFromDB
+    getAllPatientFromDB,
+    softDeletePatient
 }

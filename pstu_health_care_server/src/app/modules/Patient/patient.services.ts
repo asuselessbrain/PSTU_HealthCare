@@ -1,19 +1,14 @@
-import { Prisma } from "../../../../generated/prisma";
+import status from "http-status";
+import { Prisma, UserStatus } from "../../../../generated/prisma";
 import pagination from "../../../healper/paginationHealper";
 import { filtering } from "../../../shared/filtering";
 import { prisma } from "../../../shared/prisma"
 import { searching } from "../../../shared/searching";
+import AppError from "../../errors/AppError";
 import { patientSearchFields } from "./patient.searchField";
 
 const getAllPatientFromDB = async (query: any) => {
     const { searchTerm, page, limit, sortBy, sortOrder, ...filterData } = query;
-
-    const options = {
-        page,
-        limit,
-        sortBy,
-        sortOrder
-    }
 
     let searchItems: Prisma.PatientWhereInput[] = []
 
@@ -31,7 +26,12 @@ const getAllPatientFromDB = async (query: any) => {
 
     const whereIncludeSearch: Prisma.PatientWhereInput = { AND: searchItems }
 
-    const { page: currentPage, skip, take } = pagination(options);
+    const { page: currentPage, skip, take } = pagination({
+        page,
+        limit,
+        sortBy,
+        sortOrder
+    });
 
     const result = await prisma.patient.findMany({
         where: whereIncludeSearch,
@@ -47,7 +47,7 @@ const getAllPatientFromDB = async (query: any) => {
     })
     return {
         meta: {
-            page,
+            currentPage,
             limit: take,
             total
         },
@@ -55,6 +55,46 @@ const getAllPatientFromDB = async (query: any) => {
     };
 }
 
+const softDeletePatientFromDB = async (id: string) => {
+
+    const isPatientExist = await prisma.patient.findUniqueOrThrow({
+        where: {
+            id,
+            isDeleted: false
+        }
+    })
+
+    const isUserExist = await prisma.user.findUniqueOrThrow({
+        where: {
+            email: isPatientExist.email,
+            status: UserStatus.ACTIVE
+        }
+    })
+
+    await prisma.$transaction(async (transactionClient) => {
+        await transactionClient.patient.update({
+            where: {
+                id: isPatientExist.id
+            },
+            data: {
+                isDeleted: true
+            }
+        })
+        await transactionClient.user.update({
+            where: {
+                email: isPatientExist.email,
+                id: isUserExist.id
+            },
+            data: {
+                status: UserStatus.DELETED
+            }
+        })
+    })
+
+    return null
+}
+
 export const patientServices = {
-    getAllPatientFromDB
+    getAllPatientFromDB,
+    softDeletePatientFromDB
 }

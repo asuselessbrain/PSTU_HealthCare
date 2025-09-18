@@ -6,5 +6,7 @@ import { UserRole } from '../../../../generated/prisma';
 const router = express.Router()
 
 router.get('/', auth(UserRole.ADMIN, UserRole.SUPER_ADMIN), patientController.getAllPatientFromDB)
+router.patch('/soft/:id', auth(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.PATIENT), patientController.softDeletePatient)
+
 
 export const patientRouters = router
