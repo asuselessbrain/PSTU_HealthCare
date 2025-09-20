@@ -41,7 +41,7 @@ const getSinglePatientInfoFromDB = catchAsync(async (req: Request, res: Response
 const updatePatientIntoDB = catchAsync(async(req: Request, res: Response)=>{
     const {id} = req.params;
 
-    const result = await patientServices.updatePatient(id)
+    const result = await patientServices.updatePatient(id, req.body)
 
     sendResponse(res,{
         statusCode: status.OK,
