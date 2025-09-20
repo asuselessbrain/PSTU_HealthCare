@@ -1,11 +1,10 @@
-import status from "http-status";
 import { Prisma, UserStatus } from "../../../../generated/prisma";
 import pagination from "../../../healper/paginationHealper";
 import { filtering } from "../../../shared/filtering";
 import { prisma } from "../../../shared/prisma"
 import { searching } from "../../../shared/searching";
-import AppError from "../../errors/AppError";
 import { patientSearchFields } from "./patient.searchField";
+import { IPatient } from "./patient.type";
 
 const getAllPatientFromDB = async (query: any) => {
     const { searchTerm, page, limit, sortBy, sortOrder, ...filterData } = query;
@@ -106,7 +105,7 @@ const getSinglePatientInfoFromDB = async (id: string) => {
     return result
 }
 
-const updatePatient = async (id: string, payload: any) => {
+const updatePatient = async (id: string, payload: Partial<IPatient>) => {
 
     const { healthData, medicalReport, ...patientData } = payload
     const isPatientExist = await prisma.patient.findUniqueOrThrow({
