@@ -106,8 +106,20 @@ const getSinglePatientInfoFromDB = async (id: string) => {
         return result
 }
 
+const updatePatient = async(id: string) => {
+    const isPatientExist = await prisma.patient.findUniqueOrThrow({
+        where: {
+            id,
+            isDeleted: false
+        }
+    })
+
+    console.log(isPatientExist)
+}
+
 export const patientServices = {
     getAllPatientFromDB,
     softDeletePatientFromDB,
-    getSinglePatientInfoFromDB
+    getSinglePatientInfoFromDB,
+    updatePatient
 }
