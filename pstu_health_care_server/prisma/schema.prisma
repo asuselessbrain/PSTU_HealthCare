@@ -135,7 +135,7 @@ model PatientHealthData {
 }
 
 model MedicalReport {
-  id         String @id   @default(uuid())
+  id         String   @id @default(uuid())
   patientId  String
   patient    Patient  @relation(fields: [patientId], references: [id])
   reportName String
@@ -144,6 +144,16 @@ model MedicalReport {
   updatedAt  DateTime @updatedAt
 
   @@map("medical_report")
+}
+
+model Schedule {
+  id            String   @id @default(uuid())
+  startDateTime DateTime
+  endDateTime   DateTime
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("schedule")
 }
 
 enum UserRole {
